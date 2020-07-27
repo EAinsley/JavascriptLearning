@@ -13,3 +13,16 @@
     (null == undefined) // -> true
     (null === undefined) // -> false
     ```
+* 绑定其实是绑定地址：
+    ```
+    let object1 = {value: 10};
+    let object2 = object1;
+    let objuect3 = {value:10};
+
+    console.log(object1 == object2); // -> true
+    console.log(object1 == object3; // -> false
+
+    object1.value = 15;
+    console.log(object2.value); // -> 15;
+    ```
+    关于对象的问题参考Chapter4
