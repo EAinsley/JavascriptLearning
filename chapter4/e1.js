@@ -1,4 +1,4 @@
-function range(start, end, step = 1) {
+function range(start, end, step = start < end ? 1 : -1) {
     if (((start > end) && step >= 0) || ((start < end) && step <= 0)) {
         return -1;
     }

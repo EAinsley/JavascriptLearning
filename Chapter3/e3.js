@@ -14,11 +14,14 @@ console.log(`There's ${countBs(testString)} Bs in "` + testString + '"');
 
 function countChar(st, ch) {
     let count = 0;
-    ch = ch || "B";
     for (let i = 0; i < st.length; i++) {
         if (st[i] == ch) count++;
     }
     return count;
+}
+
+function countBs(st) {
+    return countChar(st, "B");
 }
 
 // test settings
