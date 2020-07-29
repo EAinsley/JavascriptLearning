@@ -13,6 +13,7 @@ function isEven(n) {
     }
 }
 
+//test
 console.log("50 is even: ", isEven(50));
 console.log("75 is even: ", isEven(75));
 console.log("What happens to -1:", isEven(-1));

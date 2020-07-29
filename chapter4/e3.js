@@ -1,41 +1,37 @@
 function arrayToList(arr) {
-    function addNode(now, end) {
-        let index = arr[now];
-        let next = null;
-        if (now < end) {
-            next = addNode(now + 1, end);
-        }
-        return {
-            value: index,
-            rest: next
+    let list = null;
+    for (let i = arr.length - 1; i >= 0; i--) {
+        list = {
+            value: arr[i],
+            rest: list
         };
-    };
-    return addNode(0, arr.length - 1);
+    }
+    return list;
 }
 
 function listToArray(list) {
     let a = [];
-    let tempList = list;
-    while (tempList) {
-        a.push(tempList.value);
-        tempList = tempList.rest;
+    while (list) {
+        a.push(list.value);
+        list = list.rest;
     }
     return a;
 };
 
-function prepend(element, list) {
+function prepend(value, list) {
     return {
-        value: element,
+        value,
         rest: list
     };
 }
 
-function nth(list, index, start = 0) {
+function nth(list, index) {
     if (!list) return undefined;
-    if (index == start) return list.value;
-    return nth(list.rest, index, start + 1);
+    if (index == 0) return list.value;
+    return nth(list.rest, index - 1);
 }
 
+// test
 let a = [1, 2, 3, 4, 5];
 
 let testList = arrayToList(a);
