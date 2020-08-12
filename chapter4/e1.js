@@ -1,21 +1,21 @@
 function range(start, end, step = start < end ? 1 : -1) {
-    if (((start > end) && step >= 0) || ((start < end) && step <= 0)) {
-        return -1;
-    }
-    let index = [];
-    for (let i = start; step > 0 ? (i <= end) : (i >= end); i += step) {
-        index.push(i);
-    }
+  if (((start > end) && step >= 0) || ((start < end) && step <= 0)) {
+    return -1;
+  }
+  let index = [];
+  for (let i = start; step > 0 ? (i <= end) : (i >= end); i += step) {
+    index.push(i);
+  }
 
-    return index;
+  return index;
 }
 
 function sum(arr) {
-    let ans = 0;
-    for (let a of arr) {
-        ans += a;
-    }
-    return ans;
+  let ans = 0;
+  for (let a of arr) {
+    ans += a;
+  }
+  return ans;
 }
 
 // test

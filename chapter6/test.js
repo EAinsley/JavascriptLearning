@@ -1,13 +1,13 @@
 class Rabbit {
-    constructor(type) {
-        this.type = type;
-    }
-    speak(line) {
-        console.log(`The ${this.type} rabbit says '${line}'`);
-    }
+  constructor(type) {
+    this.type = type;
+  }
+  speak(line) {
+    console.log(`The ${this.type} rabbit says '${line}'`);
+  }
 }
 
-let blackRabbit = new Rabbit("black");
+let blackRabbit = new Rabbit('black');
 
 console.log(blackRabbit.toString());
 

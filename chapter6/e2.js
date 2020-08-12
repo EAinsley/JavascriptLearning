@@ -1,35 +1,35 @@
 class Group {
-    constructor() {
-        this.property = [];
-    }
+  constructor() {
+    this.property = [];
+  }
 
-    add(value) {
-        if (this.has(value)) {
-            console.log(`failed: value ${value} exists`);
-        } else {
-            this.property.push(value);
-        }
+  add(value) {
+    if (this.has(value)) {
+      console.log(`failed: value ${value} exists`);
+    } else {
+      this.property.push(value);
     }
+  }
 
-    delete(value) {
-        if (!this.has(value)) {
-            console.log(`failed: value ${value} doesn't exist`);
-        } else {
-            this.property.splice(this.property.indexOf(value), 1);
-        }
+  delete(value) {
+    if (!this.has(value)) {
+      console.log(`failed: value ${value} doesn't exist`);
+    } else {
+      this.property.splice(this.property.indexOf(value), 1);
     }
+  }
 
-    has(value) {
-        return this.property.includes(value);
-    }
+  has(value) {
+    return this.property.includes(value);
+  }
 
-    static from(arr) {
-        let tGroup = new Group();
-        for (let a of arr) {
-            tGroup.add(a);
-        }
-        return tGroup;
+  static from(arr) {
+    let tGroup = new Group();
+    for (let a of arr) {
+      tGroup.add(a);
     }
+    return tGroup;
+  }
 }
 
 // test

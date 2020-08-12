@@ -1,4 +1,4 @@
 let min = (a, b) => a < b ? a : b;
 
-//test
+// test
 console.log(min(-13, 9));
