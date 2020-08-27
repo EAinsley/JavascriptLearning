@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <p>🎈</p>
+
+  <script>
+    // Your code here
+    let balloon = document.querySelector("p");
+    let balloonSize = 10;
+    balloon.style.fontSize = balloonSize + "px";
+
+    function Balloons(event) {
+      if (event.key == "ArrowUp") {
+        balloonSize *= 1.1;
+      } else if (event.key == "ArrowDown") {
+        balloonSize *= 0.9;
+      }
+      if (balloonSize >= 30) {
+        balloon.textContent = "💥";
+        window.removeEventListener("keydown", Balloons);
+      }
+      balloon.style.fontSize = balloonSize + "px";
+    }
+    window.addEventListener("keydown", Balloons);
+  </script>
+
+</body>
+
+</html>
