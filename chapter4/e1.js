@@ -1,13 +1,10 @@
-function range(start, end, step = start < end ? 1 : -1) {
-  if (((start > end) && step >= 0) || ((start < end) && step <= 0)) {
-    return -1;
-  }
-  let index = [];
-  for (let i = start; step > 0 ? (i <= end) : (i >= end); i += step) {
-    index.push(i);
-  }
 
-  return index;
+function range(start, end, step = start < end ? 1 : -1) {
+  let li = [];
+  for (let i = start; step > 0 ? i <= end : i >= end; i += step) {
+    li.push(i);
+  }
+  return li;
 }
 
 function sum(arr) {
