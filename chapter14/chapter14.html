@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My home page</title>
+  </head>
+  <body>
+    <div id="documentStructure">
+      <h1>My home page</h1>
+      <p>Hello, I am Marijn and this is my home page.</p>
+      <p>
+        I also wrote a book! Read it
+        <a href="http://http://eloquentjavascript.net">here</a>.
+      </p>
+      <script>
+        function talksAbout(node, string) {
+          if (node.nodeType == node.ELEMENT_NODE) {
+            for (let child of node.childNodes) {
+              if (talksAbout(child, string)) return true;
+            }
+            return false;
+          } else if (node.nodeType == node.TEXT_NODE) {
+            return node.nodeValue.indexOf(string) > -1;
+          }
+        }
+        console.log(
+          talksAbout(document.getElementById("documentStructure"), "book")
+        );
+
+        let link = document
+          .getElementById("documentStructure")
+          .getElementsByTagName("a")[0];
+        console.log(link.href);
+      </script>
+    </div>
+    <div id="findingElement">
+      <p>My Ostrich Gertrude:</p>
+      <p><img src="img/ostrich.png" alt="ostrich" id="gertrude" /></p>
+      <script>
+        let ostrich = document.getElementById("gertrude");
+        console.log(ostrich.src);
+      </script>
+    </div>
+    <div id="changingTheDocument">
+      <p>One</p>
+      <p>Two</p>
+      <p>Three</p>
+      <script>
+        let paragraphs = document
+          .getElementById("changingTheDocument")
+          .getElementsByTagName("p");
+        document
+          .getElementById("changingTheDocument")
+          .insertBefore(paragraphs[2], paragraphs[0]);
+      </script>
+    </div>
+    <div id="creatingNodes">
+      <p>
+        The <img src="img/cat.png" alt="Cat" /> in the
+        <img src="img/hat.png" alt="Hat" />.
+      </p>
+      <p><button onclick="replaceImages()">Replace</button></p>
+      <blockquote id="quote">
+        No book can ever be finished. While working on it we learn just enough
+        to find it immature the moment we turn away from it.
+      </blockquote>
+      <script>
+        function replaceImages() {
+          let images = document
+            .getElementById("creatingNodes")
+            .getElementsByTagName("img");
+          for (let i = images.length - 1; i >= 0; i--) {
+            let image = images[i];
+            if (image.alt) {
+              let text = document.createTextNode(image.alt);
+              image.parentNode.replaceChild(text, image);
+            }
+          }
+        }
+        function elt(type, ...children) {
+          let node = document.createElement(type);
+          for (let child of children) {
+            if (typeof child != "string") node.appendChild(child);
+            else node.appendChild(document.createTextNode(child));
+          }
+          return node;
+        }
+        document
+          .getElementById("quote")
+          .appendChild(
+            elt(
+              "footer",
+              "-",
+              elt("strong", "Karl Popper"),
+              ", preface to the second edition of ",
+              elt("em", "The Open Society and Its Enemies."),
+              ", 1950"
+            )
+          );
+      </script>
+    </div>
+    <div id="attributes">
+      <p data-classified="secret">The launch code is 00000000.</p>
+      <p data-classified="unclassified">I have two feet.</p>
+      <script>
+        let paras = document
+          .getElementById("attributes")
+          .getElementsByTagName("p");
+        for (let para of paras) {
+          if (para.getAttribute("data-classified") == "secret") para.remove();
+        }
+      </script>
+    </div>
+    <div id="layout">
+      <p style="border: 3px solid red">I'm boxed in</p>
+      <p><span id="one"></span></p>
+      <p><span id="two"></span></p>
+      <script>
+        let para = document
+          .getElementById("layout")
+          .getElementsByTagName("p")[0];
+        console.log("clientHeight: ", para.clientHeight);
+        console.log("offsetHeight: ", para.offsetHeight);
+        function time(name, action) {
+          let start = Date.now();
+          action();
+          console.log(name, "took", Date.now() - start, "ms");
+        }
+        time("naive", () => {
+          let target = document.getElementById("one");
+          while (target.offsetWidth < 2000) {
+            target.appendChild(document.createTextNode("X"));
+          }
+        });
+        time("clever", () => {
+          let target = document.getElementById("two");
+          target.appendChild(document.createTextNode("XXXXX"));
+          let total = Math.ceil(2000 / (target.offsetWidth / 5));
+          target.firstChild.nodeValue = "X".repeat(total);
+        });
+      </script>
+    </div>
+    <div id="styling">
+      <p><a href=".">Normal Link</a></p>
+      <p><a href="." style="color: green">Green Link</a></p>
+      <p>
+        This text is displayed<strong>inline</strong>,
+        <strong style="display: block">as a block</strong>, and
+        <strong style="display: none">not at all</strong>.
+      </p>
+      <p id="para" style="color: purple">Nice text</p>
+      <script>
+        let styling_para = document.getElementById("para");
+        console.log(styling_para.style.color);
+        styling_para.style.color = "magenta";
+      </script>
+    </div>
+    <div id="cascadingStyles">
+      <style>
+        strong {
+          font-style: italic;
+          color: grey;
+        }
+      </style>
+      <p>Now <strong>strong text</strong> is italic and grey.</p>
+    </div>
+    <div id="querySelectors">
+      <p>And if you go chasing<span class="animal">rabbits</span></p>
+      <p>And you know you're going to fall</p>
+      <p>
+        Tell 'em a
+        <span class="character">
+          hookah smoking <span class="animal">caterpillar </span>
+        </span>
+      </p>
+      <p>Has given you the call</p>
+      <script>
+        function count(selector) {
+          return document
+            .getElementById("querySelectors")
+            .querySelectorAll(selector).length;
+        }
+        console.log(count("p"));
+        console.log(count(".animal"));
+        console.log(count("p .animal"));
+        console.log(count("p > .animal"));
+      </script>
+    </div>
+    <div id="positioningAndAnimating">
+      <p style="text-align: center">
+        <img src="img/cat.png" alt="cat" style="position: relative" />
+      </p>
+      <script>
+        let cat = document
+          .getElementById("positioningAndAnimating")
+          .querySelector("img");
+        let angle = Math.PI / 2;
+        function animate(time, lastTime) {
+          if (lastTime != null) {
+            angle += (time - lastTime) * 0.001;
+          }
+          cat.style.top = Math.sin(angle) * 20 + "px";
+          cat.style.left = Math.cos(angle) * 200 + "px";
+          requestAnimationFrame((newTime) => animate(newTime, time));
+        }
+        requestAnimationFrame(animate);
+      </script>
+    </div>
+  </body>
+  <script></script>
+</html>
