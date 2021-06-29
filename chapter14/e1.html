@@ -52,25 +52,29 @@
       ];
 
       // Your code here
-      let table = document.createElement("table");
-      let tableheader = document.createElement("tr");
-      let table_keys_iter = Object.keys(MOUNTAINS[0]);
-      for (const field of table_keys_iter) {
-        let he = document.createElement("th");
-        he.appendChild(document.createTextNode(field));
-        tableheader.appendChild(he);
+      function buildTable(data) {
+        let table = document.createElement("table");
+        let field = Object.keys(data[0]);
+        let head_row = document.createElement("tr");
+        field.forEach((field) => {
+          let head_cell = document.createElement("th");
+          head_cell.appendChild(document.createTextNode(field));
+          head_row.appendChild(head_cell);
+        });
+        table.appendChild(head_row);
+        data.forEach((item) => {
+          let row = document.createElement("tr");
+          field.forEach((field) => {
+            let cell = document.createElement("td");
+            cell.appendChild(document.createTextNode(item[field]));
+            if (typeof item[field] == "number") cell.style.textAlign = "right";
+            row.appendChild(cell);
+          });
+          table.appendChild(row);
+        });
+        return table;
       }
-      table.appendChild(tableheader);
-      for (const row of MOUNTAINS) {
-        let tablerow = document.createElement("tr");
-        for (const item_key of table_keys_iter) {
-          let td = document.createElement("td");
-          td.appendChild(document.createTextNode(row[item_key]));
-          tablerow.appendChild(td);
-        }
-        table.appendChild(tablerow);
-      }
-      document.getElementById("mountains").appendChild(table);
+      document.getElementById("mountains").appendChild(buildTable(MOUNTAINS));
     </script>
   </body>
 </html>
