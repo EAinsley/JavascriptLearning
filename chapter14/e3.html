@@ -1,31 +1,39 @@
-<style>
-  body {
-    min-height: 200px
-  }
-</style>
-<img src="img/cat.png" id="cat" style="position: absolute">
-<img src="img/hat.png" id="hat" style="position: absolute">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      body {
+        min-height: 200px;
+      }
+    </style>
+    <img src="img/cat.png" id="cat" style="position: absolute" />
+    <img src="img/hat.png" id="hat" style="position: absolute" />
 
-<script>
-  let cat = document.querySelector("#cat");
-  let hat = document.querySelector("#hat");
+    <script>
+      let cat = document.querySelector("#cat");
+      let hat = document.querySelector("#hat");
 
-  let angle = 0;
-  let lastTime = null;
-  cat.style.zIndex = 1;
+      let angle = 0;
+      let lastTime = null;
+      function animate(time) {
+        if (lastTime != null) angle += (time - lastTime) * 0.001;
+        lastTime = time;
+        cat.style.top = Math.sin(angle) * 40 + 100 + "px";
+        hat.style.top = Math.sin(angle) * 40 + 60 + "px";
+        cat.style.left = Math.cos(angle) * 200 + 230 + "px";
+        hat.style.left = Math.cos(angle) * 200 + 240 + "px";
 
-  function animate(time) {
-    if (lastTime != null) angle += (time - lastTime) * 0.001;
-    lastTime = time;
-    cat.style.top = (Math.sin(angle) * 40 + 40) + "px";
-    cat.style.left = (Math.cos(angle) * 200 + 230) + "px";
+        // Your extensions here.
 
-    // Your extensions here.
-    hat.style.top = (Math.sin(angle) * 40 + 120) + "px";
-    hat.style.left = (Math.cos(angle) * 200 + 220) + "px";
-
-
-    requestAnimationFrame(animate);
-  }
-  requestAnimationFrame(animate);
-</script>
+        requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+    </script>
+  </body>
+</html>
