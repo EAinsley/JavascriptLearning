@@ -20,18 +20,13 @@
       let hat = document.querySelector("#hat");
 
       let angle = 0;
-      let lastTime = null;
-      function animate(time) {
+      function animate(time, lastTime) {
         if (lastTime != null) angle += (time - lastTime) * 0.001;
-        lastTime = time;
         cat.style.top = Math.sin(angle) * 40 + 100 + "px";
         hat.style.top = Math.sin(angle) * 40 + 60 + "px";
         cat.style.left = Math.cos(angle) * 200 + 230 + "px";
         hat.style.left = Math.cos(angle) * 200 + 240 + "px";
-
-        // Your extensions here.
-
-        requestAnimationFrame(animate);
+        requestAnimationFrame((newTime) => animate(newTime, time));
       }
       requestAnimationFrame(animate);
     </script>

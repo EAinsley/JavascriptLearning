@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chapter 15</title>
+  </head>
+  <body>
+    <div id="eventHandler">
+      <p>Click this document to activate the handler.</p>
+      <script>
+        window.addEventListener("click", () => {
+          console.log("You knocked?");
+        });
+      </script>
+    </div>
+    <div id="eventsAndDOMNodes">
+      <button>Click me</button>
+      <p>No handler here.</p>
+      <button id="oneclickbutton">Act-once button</button>
+      <script>
+        let button = document.querySelector("button");
+        button.addEventListener("click", () => {
+          console.log("Button clicked.");
+        });
+        let oneclickbutton = document.querySelector("#oneclickbutton");
+        function once() {
+          console.log("Done.");
+          oneclickbutton.removeEventListener("click", once);
+        }
+        oneclickbutton.addEventListener("click", once);
+      </script>
+    </div>
+    <div id="eventObject">
+      <button>Click me any way you want</button>
+      <script>
+        let eventObjectButton = document.querySelector("#eventObject>button");
+        eventObjectButton.addEventListener("mousedown", (event) => {
+          if (event.button == 0) {
+            console.log("Left button");
+          } else if (event.button == 1) {
+            console.log("Middle button");
+          } else if (event.button == 2) {
+            console.log("Right button");
+          }
+        });
+      </script>
+    </div>
+    <div id="propagation">
+      <p>A paragraph with a <button>button</button>.</p>
+      <button>A</button>
+      <button>B</button>
+      <button>C</button>
+      <script>
+        let para = document.querySelector("#propagation>p");
+        let propagationbutton = document.querySelector("#propagation button");
+        para.addEventListener("mousedown", () => {
+          console.log("Handler for paragraph.");
+        });
+        propagationbutton.addEventListener("mousedown", (event) => {
+          console.log("Handler for button.");
+          if (event.button == 2) event.stopPropagation();
+        });
+        document
+          .getElementById("propagation")
+          .addEventListener("click", (event) => {
+            if (event.target.nodeName == "BUTTON") {
+              console.log("Clicked", event.target.textContent);
+            }
+          });
+      </script>
+    </div>
+    <div id="keyEvents">
+      <p>This page turns to violet whent you hold the V key.</p>
+      <p>Press Control-v to continue.</p>
+      <script>
+        document.body.style.transition = "2s";
+        window.addEventListener("keydown", (event) => {
+          if (event.key == "v") {
+            document.body.style.background = "violet";
+          }
+        });
+        window.addEventListener("keyup", (event) => {
+          if (event.key == "v") {
+            document.body.style.background = "";
+          }
+        });
+        window.addEventListener("keydown", (event) => {
+          if (event.key == "v" && event.ctrlKey) {
+            console.log("continuing!");
+          }
+        });
+      </script>
+    </div>
+    <div id="mouseClick">
+      <style>
+        #mouseClick {
+          height: 200px;
+          width: 400px;
+          background: beige;
+        }
+        .dot {
+          height: 8px;
+          width: 8px;
+          border-radius: 4px;
+          background: blue;
+          position: absolute;
+        }
+      </style>
+      <script>
+        document
+          .getElementById("mouseClick")
+          .addEventListener("click", (event) => {
+            let dot = document.createElement("div");
+            dot.className = "dot";
+            dot.style.left = event.pageX - 4 + "px";
+            dot.style.top = event.pageY - 4 + "px";
+            document.getElementById("mouseClick").appendChild(dot);
+          });
+      </script>
+    </div>
+    <div id="mouseMotion">
+      <p>Drag the bar to change its width:</p>
+      <div style="background: orange; width: 60px; height: 20px"></div>
+      <script>
+        let lastX;
+        let bar = document.querySelector("#mouseMotion>div");
+        bar.addEventListener("mousedown", (event) => {
+          if (event.button == 0) {
+            lastX = event.clientX;
+            window.addEventListener("mousemove", moved);
+            event.preventDefault();
+          }
+        });
+        function moved(event) {
+          if (event.buttons == 0) {
+            window.removeEventListener("mousemove", moved);
+          } else {
+            let dist = event.clientX - lastX;
+            let newWidth = Math.max(10, bar.offsetWidth + dist);
+            bar.style.width = newWidth + "px";
+            lastX = event.clientX;
+          }
+        }
+      </script>
+    </div>
+    <div id="touchEvents" style="height: 100px; width: 100vw">
+      <style>
+        dot {
+          position: absolute;
+          display: block;
+          border: 2px solid red;
+          border-radius: 50px;
+          height: 100px;
+          width: 100px;
+        }
+      </style>
+      <p>Touch This page</p>
+      <script>
+        function update(event) {
+          for (let dot; (dot = document.querySelector("dot")); ) {
+            dot.remove();
+          }
+          for (let { pageX, pageY } of Array.from(event.touches)) {
+            let dot = document.createElement("dot");
+            dot.style.left = pageX - 50 + "px";
+            dot.style.top = pageY - 50 + "px";
+            document.getElementById("touchEvents").appendChild(dot);
+          }
+        }
+        window.addEventListener("touchstart", update);
+        window.addEventListener("touchmove", update);
+        window.addEventListener("touchend", update);
+      </script>
+    </div>
+    <div id="scrollEvents">
+      <style>
+        #progress {
+          border-bottom: 2px solid blue;
+          width: 0;
+          position: fixed;
+          top: 0;
+          left: 0;
+        }
+      </style>
+      <div id="progress"></div>
+      <script>
+        document
+          .getElementById("scrollEvents")
+          .appendChild(
+            document.createTextNode(
+              "supercalifragilisticexpialidocious ".repeat(1000)
+            )
+          );
+        let progressbar = document.querySelector("#progress");
+        window.addEventListener("scroll", () => {
+          let max = document.body.scrollHeight - innerHeight;
+          progressbar.style.width = `${(pageYOffset / max) * 100}%`;
+        });
+      </script>
+    </div>
+    <div id="focusEvents">
+      <p>Name: <input type="text" data-help="Your full name" /></p>
+      <p>Age: <input type="text" data-help="Your age in years" /></p>
+      <p id="focusEventsHelp" style="height: 1em"></p>
+      <script>
+        let focuseventshelp = document.querySelector("#focusEventsHelp");
+        let focuseventsfileds = document.querySelectorAll("#focusEvents input");
+        for (let field of Array.from(focuseventsfileds)) {
+          field.addEventListener("focus", (event) => {
+            let text = event.target.getAttribute("data-help");
+            focuseventshelp.textContent = text;
+          });
+          field.addEventListener("blur", (event) => {
+            focuseventshelp.textContent = "";
+          });
+        }
+      </script>
+    </div>
+    <div id="eventsAndTheEventLoop">
+      <script>
+        let squareWorker = new Worker("code/squareworkers.js");
+        squareWorker.addEventListener("message", (event) => {
+          console.log("The worker responded:", event.data);
+        });
+        squareWorker.postMessage(40);
+        squareWorker.postMessage(20);
+      </script>
+    </div>
+    <div id="timers">
+      <script>
+        let ticks = 0;
+        let clock = setInterval(() => {
+          console.log("tick", ticks++);
+          if (ticks == 10) {
+            clearInterval(clock);
+            console.log("stop");
+          }
+        }, 200);
+      </script>
+    </div>
+    <div id="debouncing">
+      <textarea> </textarea>
+      <script>
+        let textarea = document.querySelector("#debouncing textarea");
+        let timeout;
+        textarea.addEventListener("input", () => {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => console.log("typed!"), 500);
+        });
+
+        let scheduled = null;
+        window.addEventListener("mousemove", (event) => {
+          if (!scheduled) {
+            setTimeout(() => {
+              document.getElementById(
+                "debouncing"
+              ).textContent = `Mouse at ${scheduled.pageX}, ${scheduled.pageY}`;
+              scheduled = null;
+            }, 250);
+          }
+          scheduled = event;
+        });
+      </script>
+    </div>
+  </body>
+</html>

@@ -1,24 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-
-<body>
-  <tab-panel>
-    <div data-tabname="one">Tab one</div>
-    <div data-tabname="two">Tab two</div>
-    <div data-tabname="three">Tab three</div>
-  </tab-panel>
-  <script>
-    function asTabs(node) {
-      // Your code here.
-    }
-    asTabs(document.querySelector("tab-panel"));
-  </script>
-</body>
-
+  <body>
+    <tab-panel>
+      <div data-tabname="one">Tab one</div>
+      <div data-tabname="two">Tab two</div>
+      <div data-tabname="three">Tab three</div>
+    </tab-panel>
+    <script>
+      function asTabs(node) {
+        // Your code here.
+        let tabs = Array.from(node.children).map((child) => {
+          let button = document.createElement("button");
+          button.textContent = child.getAttribute("data-tabname");
+          button.addEventListener("click", selecttab);
+          child.style.display = "none";
+          tab = { child, button };
+          return tab;
+        });
+        let tabgroup = document.createElement("div");
+        tabgroup.className = "tabgroup";
+        for (let { button } of tabs) {
+          tabgroup.appendChild(button);
+        }
+        node.insertBefore(tabgroup, node.firstChild);
+        function selecttab(event) {
+          tagname = event.target.textContent;
+          for (let tab of tabs) {
+            if (tab.child.getAttribute("data-tabname") == tagname) {
+              tab.child.style.display = "block";
+              tab.button.style.color = "red";
+            } else {
+              tab.child.style.display = "none";
+              tab.button.style.color = "";
+            }
+          }
+        }
+      }
+      asTabs(document.querySelector("tab-panel"));
+    </script>
+  </body>
 </html>

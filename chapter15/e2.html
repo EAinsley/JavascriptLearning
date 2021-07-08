@@ -1,54 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-
-<body>
-  <style>
-    .trail {
-      /* className for the trail elements */
-      position: absolute;
-      height: 6px;
-      width: 6px;
-      border-radius: 3px;
-      background: teal;
-    }
-
-    body {
-      height: 300px;
-    }
-  </style>
-
-  <script>
-    // Your code here.
-    const kLength = 50;
-    let body = document.querySelector("body");
-    let dots = [];
-    for (let i = 0; i < kLength; i++) {
-      let dot = document.createElement("div");
-      dot.className = "trail";
-      dot.style.display = "none";
-      dots.push(dot);
-      body.appendChild(dot);
-    }
-
-    function Moving(event) {
-      for (let i = 0; i < kLength - 1; i++) {
-        dots[i].style.left = dots[i + 1].style.left;
-        dots[i].style.top = dots[i + 1].style.top;
-        dots[i].style.display = "block";
+  <body>
+    <style>
+      .trail {
+        /* className for the trail elements */
+        position: absolute;
+        height: 6px;
+        width: 6px;
+        border-radius: 3px;
+        background: teal;
+        display: block;
       }
-      dots[kLength - 1].style.left = (event.pageX - 3) + "px";
-      dots[kLength - 1].style.top = (event.pageY - 3) + "px";
 
-    }
-    window.addEventListener("mousemove", Moving);
-  </script>
+      .dessert {
+        position: absolute;
+        height: 10px;
+        width: 10px;
+        border-radius: 5px;
+        background: orange;
+        left: 50%;
+        top: 50%;
+        display: block;
+      }
 
-</body>
+      body {
+        height: 300px;
+      }
+    </style>
 
+    <script>
+      // Your code here.
+      const kLength = 10;
+      let body = document.querySelector("body");
+      let dots = Array();
+      let dessert = document.createElement("div");
+      dessert.className = "dessert";
+      body.appendChild(dessert);
+      function addtrail(posx, posy) {
+        let newdot = document.createElement("div");
+        newdot.className = "trail";
+        newdot.style.left = posx - 3 + "px";
+        newdot.style.top = posy - 3 + "px";
+        dots.push(newdot);
+        body.appendChild(newdot);
+      }
+      function Moving(event) {
+        dessertrec = dessert.getBoundingClientRect();
+        if (
+          Math.abs(event.pageX - dessertrec.left - 5) < 8 &&
+          Math.abs(event.pageY - dessertrec.top - 5) < 8
+        ) {
+          dessert.style.left =
+            Math.random() * document.body.offsetWidth - 3 + "px";
+          dessert.style.top =
+            Math.random() * document.body.offsetHeight - 3 + "px";
+          addtrail(event.pageX, event.pageY);
+        } else {
+          taildot = dots.pop();
+          if (taildot) {
+            taildot.style.left = event.pageX - 3 + "px";
+            taildot.style.top = event.pageY - 3 + "px";
+            dots.unshift(taildot);
+          }
+        }
+        console.log(event.pageX, event.pageY);
+      }
+      window.addEventListener("mousemove", Moving);
+    </script>
+  </body>
 </html>
