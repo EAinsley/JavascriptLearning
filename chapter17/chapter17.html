@@ -11,26 +11,24 @@
       <p>Begin: SVG</p>
       <p>Normal HTML here.</p>
       <svg xmlns="http://www.w3.org/2000/svg">
-        <cx_curves r="50" cx="50" cy="50" fill="red" />
+        <circle r="50" cx="50" cy="50" fill="red" />
         <rect x="120" y="5" width="90" height="90" stroke="blue" fill="none" />
       </svg>
-      <button onclick="makecx_curvesCyan()">
-        Change the cx_curves to cyan
-      </button>
+      <button onclick="makecx_curvesCyan()">Change the circle to cyan</button>
       <p>End: SVG</p>
       <script>
         function makecx_curvesCyan() {
-          let cx_curves = document.querySelector("#SVG cx_curves");
+          let cx_curves = document.querySelector("#SVG circle");
           let button = document.querySelector("#SVG button");
           cx_curves.setAttribute("fill", "cyan");
-          button.textContent = "Change the cx_curves to red";
+          button.textContent = "Change the circle to red";
           button.setAttribute("onclick", "makecx_curvesRed()");
         }
         function makecx_curvesRed() {
-          let cx_curves = document.querySelector("#SVG cx_curves");
+          let cx_curves = document.querySelector("#SVG circle");
           let button = document.querySelector("#SVG button");
           cx_curves.setAttribute("fill", "red");
-          button.textContent = "Change the cx_curves to cyan";
+          button.textContent = "Change the circle to cyan";
           button.setAttribute("onclick", "makecx_curvesCyan()");
         }
       </script>
