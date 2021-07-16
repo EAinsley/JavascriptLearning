@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chapter 17</title>
+  </head>
+  <body>
+    <div id="SVG">
+      <p>Begin: SVG</p>
+      <p>Normal HTML here.</p>
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <cx_curves r="50" cx="50" cy="50" fill="red" />
+        <rect x="120" y="5" width="90" height="90" stroke="blue" fill="none" />
+      </svg>
+      <button onclick="makecx_curvesCyan()">
+        Change the cx_curves to cyan
+      </button>
+      <p>End: SVG</p>
+      <script>
+        function makecx_curvesCyan() {
+          let cx_curves = document.querySelector("#SVG cx_curves");
+          let button = document.querySelector("#SVG button");
+          cx_curves.setAttribute("fill", "cyan");
+          button.textContent = "Change the cx_curves to red";
+          button.setAttribute("onclick", "makecx_curvesRed()");
+        }
+        function makecx_curvesRed() {
+          let cx_curves = document.querySelector("#SVG cx_curves");
+          let button = document.querySelector("#SVG button");
+          cx_curves.setAttribute("fill", "red");
+          button.textContent = "Change the cx_curves to cyan";
+          button.setAttribute("onclick", "makecx_curvesCyan()");
+        }
+      </script>
+    </div>
+    <div id="theCanvasElement">
+      <p>Begin: the canvas element</p>
+      <p>Before canvas.</p>
+      <canvas width="120" height="60"></canvas>
+      <p>After canvas.</p>
+      <p>End: the canvas element</p>
+      <script>
+        let cx_theCanvasElement = document.querySelector(
+          "#theCanvasElement canvas"
+        );
+        let context_theCanvasElement = cx_theCanvasElement.getContext("2d");
+        context_theCanvasElement.fillStyle = "red";
+        context_theCanvasElement.fillRect(10, 10, 100, 50);
+      </script>
+    </div>
+    <div id="linesAndSurfaces">
+      <p>Begin: lines and surfaces</p>
+      <canvas></canvas>
+      <p>End: lines and surfaces</p>
+      <script>
+        let cx_linesAndSurfaces = document
+          .querySelector("#linesAndSurfaces canvas")
+          .getContext("2d");
+        cx_linesAndSurfaces.strokeStyle = "blue";
+        cx_linesAndSurfaces.strokeRect(5, 5, 50, 50);
+        cx_linesAndSurfaces.lineWidth = 5;
+        cx_linesAndSurfaces.strokeRect(135, 5, 50, 50);
+      </script>
+    </div>
+    <div id="paths">
+      <p>Begin: paths</p>
+      <canvas></canvas>
+      <p>End: paths</p>
+      <script>
+        let cx_paths = document.querySelector("#paths canvas").getContext("2d");
+        cx_paths.beginPath();
+        for (let y = 10; y < 100; y += 10) {
+          cx_paths.moveTo(10, y);
+          cx_paths.lineTo(90, y);
+        }
+        cx_paths.stroke();
+        cx_paths.moveTo(140, 10);
+        cx_paths.lineTo(100, 70);
+        cx_paths.lineTo(180, 70);
+        cx_paths.fill();
+      </script>
+    </div>
+    <div id="curves">
+      <p>Begin: curves</p>
+      <canvas width="400"></canvas>
+      <p>End: curves</p>
+      <script>
+        let cx_curves = document
+          .querySelector("#curves canvas")
+          .getContext("2d");
+        cx_curves.beginPath();
+        cx_curves.moveTo(10, 90);
+        cx_curves.quadraticCurveTo(60, 10, 90, 90);
+        cx_curves.lineTo(60, 10);
+        cx_curves.closePath();
+        cx_curves.stroke();
+
+        cx_curves.beginPath();
+        cx_curves.moveTo(100, 90);
+        cx_curves.bezierCurveTo(100, 10, 180, 10, 140, 90);
+        cx_curves.lineTo(180, 10);
+        cx_curves.lineTo(100, 10);
+        cx_curves.closePath();
+        cx_curves.stroke();
+
+        cx_curves.beginPath();
+        cx_curves.arc(240, 50, 40, 0, 7);
+        // cx_curves.moveTo(360, 50);
+        cx_curves.arc(320, 50, 40, 0, 0.5 * Math.PI);
+        cx_curves.stroke();
+      </script>
+    </div>
+    <div id="drawingAPieChart">
+      <p>Begin: drawing a pie chart</p>
+      <canvas width="200" height="200"></canvas>
+      <p>End: drawing a pie chart</p>
+      <script>
+        const results = [
+          { name: "Satisfied", count: 1043, color: "lightblue" },
+          { name: "Neutral", count: 563, color: "lightgreen" },
+          { name: "Unsatisfied", count: 510, color: "pink" },
+          { name: "No comment", count: 175, color: "silver" },
+        ];
+        let cx_drawing_a_pie_chart = document
+          .querySelector("#drawingAPieChart canvas")
+          .getContext("2d");
+        let total = results.reduce((sum, { count }) => sum + count, 0);
+        let currentAngle = -0.5 * Math.PI;
+        for (let result of results) {
+          let sliceAngle = (result.count / total) * 2 * Math.PI;
+          cx_drawing_a_pie_chart.beginPath();
+          cx_drawing_a_pie_chart.arc(
+            100,
+            100,
+            100,
+            currentAngle,
+            currentAngle + sliceAngle
+          );
+          currentAngle += sliceAngle;
+          cx_drawing_a_pie_chart.lineTo(100, 100);
+          cx_drawing_a_pie_chart.fillStyle = result.color;
+          cx_drawing_a_pie_chart.fill();
+        }
+      </script>
+    </div>
+    <div id="text">
+      <p>Begin: text</p>
+      <canvas></canvas>
+      <p>End: text</p>
+      <script>
+        let cx_text = document.querySelector("#text canvas").getContext("2d");
+        cx_text.font = "28px Georgia";
+        cx_text.fillStyle = "fuchsia";
+        cx_text.fillText("I can draw text, too!", 10, 50);
+      </script>
+    </div>
+    <div id="images">
+      <canvas></canvas>
+      <script>
+        let cx_images = document
+          .querySelector("#images canvas")
+          .getContext("2d");
+        let img_hat = document.createElement("img");
+        img_hat.src = "img/hat.png";
+        img_hat.addEventListener("load", () => {
+          for (let x = 10; x < 200; x += 30) {
+            cx_images.drawImage(img_hat, x, 10);
+          }
+        });
+
+        let img_player = document.createElement("img");
+        img_player.src = "img/player.png";
+        let spriteW = 24;
+        let spriteH = 30;
+        img_player.addEventListener("load", () => {
+          let cycle = 0;
+          setInterval(() => {
+            cx_images.clearRect(0, 70, spriteW, spriteH);
+            cx_images.drawImage(
+              img_player,
+              cycle * spriteW,
+              0,
+              spriteW,
+              spriteH,
+              0,
+              70,
+              spriteW,
+              spriteH
+            );
+            cycle = (cycle + 1) % 8;
+          }, 120);
+        });
+      </script>
+    </div>
+    <div id="transformation">
+      <p>Begin: transformation</p>
+      <canvas></canvas>
+      <p>End: transformation</p>
+      <script>
+        let cx_transformation = document
+          .querySelector("#transformation canvas")
+          .getContext("2d");
+        cx_transformation.scale(3, 0.5);
+        cx_transformation.beginPath();
+        cx_transformation.arc(50, 50, 40, 0, 7);
+        cx_transformation.lineWidth = 3;
+        cx_transformation.stroke();
+
+        function flipHorizontally(context, around) {
+          context.translate(around, 0);
+          context.scale(-1, 1);
+          context.translate(-around, 0);
+        }
+        cx_transformation.setTransform(1, 0, 0, 1, 0, 0);
+        img_player.addEventListener("load", () => {
+          flipHorizontally(cx_transformation, 100 + spriteW / 2);
+          console.log("flag");
+          cx_transformation.drawImage(
+            img_player,
+            0,
+            0,
+            spriteW,
+            spriteH,
+            100,
+            120,
+            spriteW,
+            spriteH
+          );
+        });
+      </script>
+    </div>
+    <div id="storingAndClearingTransformations">
+      <p>Begin: storing and clearing transformations</p>
+      <canvas width="600" height="300"></canvas>
+      <p>End: storing and clearing transformations</p>
+      <script>
+        let cx_storing_and_clearing_transformation = document
+          .querySelector("#storingAndClearingTransformations canvas")
+          .getContext("2d");
+        function branch(length, angle, scale) {
+          cx_storing_and_clearing_transformation.fillRect(0, 0, 1, length);
+          if (length < 7) return;
+          cx_storing_and_clearing_transformation.save();
+          cx_storing_and_clearing_transformation.translate(0, length);
+          cx_storing_and_clearing_transformation.rotate(-angle);
+          branch(length * scale, angle, scale);
+          cx_storing_and_clearing_transformation.rotate(2 * angle);
+          branch(length * scale, angle, scale);
+          cx_storing_and_clearing_transformation.restore();
+        }
+        cx_storing_and_clearing_transformation.translate(300, 0);
+        branch(60, 0.5, 0.8);
+      </script>
+    </div>
+  </body>
+</html>
