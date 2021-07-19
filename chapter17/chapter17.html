@@ -252,5 +252,23 @@
         branch(60, 0.5, 0.8);
       </script>
     </div>
+    <div id="ExcerciseOne">
+      <p>Begin: excercise 1</p>
+      <canvas width="300" height="300"></canvas>
+      <script src="./code/exercise_one.js"></script>
+      <script>
+        cx_excercise_one = document
+          .querySelector("#ExcerciseOne canvas")
+          .getContext("2d");
+        drawTrapezoid(cx_excercise_one, 20, 40, 20, 0, 10);
+        drawTrapezoid(cx_excercise_one, 40, 20, 20, 50, 10);
+        drawDiamond(cx_excercise_one, 20, 120, 20, "red");
+        drawDiamond(cx_excercise_one, 20, 160, 20);
+        drawZigzag(cx_excercise_one, 50, 140, 10, 200, 0);
+        drawSpiral(cx_excercise_one, 50, 100, 100);
+        drawStar(cx_excercise_one, 200, 200, 50, 8);
+      </script>
+      <p>End: excercise 1</p>
+    </div>
   </body>
 </html>
