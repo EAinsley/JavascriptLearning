@@ -73,11 +73,11 @@ function drawZigzag(contex, length, height, degree, leftmost, topmost) {
   contex.stroke();
 }
 
-function drawSpiral(contex, centerX, centerY, segmentcount) {
+function drawSpiral(contex, centerX, centerY, numsegements) {
   contex.beginPath();
   let total_angle = 0;
   let total_radius = 0;
-  for (let i = 0; i < segmentcount; i++) {
+  for (let i = 0; i < numsegements; i++) {
     contex.arc(centerX, centerY, total_radius, total_angle, total_angle + 0.2);
     total_radius += 0.6;
     total_angle += 0.2;
@@ -94,17 +94,19 @@ function drawStar(
   fill = "orange"
 ) {
   const sliceangle = (2 * Math.PI) / numpoints;
-  let currentangle = 0;
   contex.beginPath();
   contex.moveTo(centerX + radius, centerY);
-  for (let i = 0; i <= numpoints; i++) {
+  for (
+    let i = 0, currentangle = 0;
+    i <= numpoints;
+    i++, currentangle += sliceangle
+  ) {
     contex.quadraticCurveTo(
       centerX,
       centerY,
       centerX + Math.cos(currentangle) * radius,
       centerY + Math.sin(currentangle) * radius
     );
-    currentangle += sliceangle;
   }
   contex.fillStyle = fill;
   contex.fill();

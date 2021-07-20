@@ -214,7 +214,6 @@
         cx_transformation.setTransform(1, 0, 0, 1, 0, 0);
         img_player.addEventListener("load", () => {
           flipHorizontally(cx_transformation, 100 + spriteW / 2);
-          console.log("flag");
           cx_transformation.drawImage(
             img_player,
             0,
@@ -269,6 +268,75 @@
         drawStar(cx_excercise_one, 200, 200, 50, 8);
       </script>
       <p>End: excercise 1</p>
+    </div>
+    <div id="ExcerciseTwo">
+      <p>Begin: excerciese 2</p>
+      <canvas width="600" height="300"></canvas>
+      <script src="./code/excercese_two.js"></script>
+      <script>
+        let cx = document
+          .querySelector("#ExcerciseTwo canvas")
+          .getContext("2d");
+        DrawPieChartWithCaption(cx, 300, 150, 100, results);
+      </script>
+      <p>End: excercise 2</p>
+    </div>
+    <div id="ExcerciseThree">
+      <p>Begin: excercise 3</p>
+      <canvas width="400" height="400"></canvas>
+      <script src="./code/excercise_three.js"></script>
+      <script>
+        const numsball = 1;
+        const boxheight = 250;
+        const boxwidth = 300;
+        const boxstartx = 10;
+        const boxstarty = 10;
+        const ballradius = 20;
+        const maxspeed = 150;
+        let contex_excercisethree = document
+          .querySelector("#ExcerciseThree canvas")
+          .getContext("2d");
+        let lastTime = null;
+        bunchball = new Array();
+        for (let i = 0; i < numsball; i++) {
+          bunchball.push(
+            new Ball(
+              ballradius,
+              new Vec(
+                boxstartx +
+                  ballradius +
+                  Math.random() * (boxwidth - 2 * ballradius),
+                boxstarty +
+                  ballradius +
+                  Math.random() * (boxheight - 2 * ballradius)
+              ),
+              new Vec(
+                Math.random() * (2 * maxspeed) - maxspeed,
+                Math.random() * (2 * maxspeed) - maxspeed
+              )
+            )
+          );
+        }
+        let bouncingballbox = new BouncingBallBox(
+          new Vec(boxstartx, boxstarty),
+          new Vec(boxwidth, boxheight),
+          "yellow",
+          ...bunchball
+        );
+        function frame(time) {
+          if (lastTime != null) {
+            updateAnimation(Math.min(100, time - lastTime) / 1000);
+          }
+          lastTime = time;
+          requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+        function updateAnimation(step) {
+          bouncingballbox = bouncingballbox.update(step);
+          bouncingballbox.draw(contex_excercisethree);
+        }
+      </script>
+      <p>End: excercise 3</p>
     </div>
   </body>
 </html>
