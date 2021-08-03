@@ -7,10 +7,20 @@ button.addEventListener("click", () => {
   });
   new Promise((resolve) => {
     console.log("promise 1 create");
+    throw Error("?");
     resolve(null);
-  }).then(() => {
-    console.log("promise 1 fullfilled");
-  });
+  })
+    .then(() => {
+      console.log("promise 1 fullfilled");
+    })
+    .catch(() => {
+      console.log("promise 1 catched");
+    });
+  async function hello() {
+    return (greeting = await Promise.resolve("Hello"));
+  }
+
+  hello().then(console.log);
 });
 
 button.addEventListener("click", () => {

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+    <div class="mermaid">
+      graph LR subgraph loop[一次完整的任务循环] queue[任务队列] --取一个任务-->
+      stack[执行栈] --栈空--> queue end main[main script] --入队--> loop
+    </div>
+  </body>
+</html>

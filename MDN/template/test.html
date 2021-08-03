@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Boxes</title>
+  </head>
+  <body>
+    <div
+      id="box1"
+      style="
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        top: 10px;
+        background: red;
+      "
+    ></div>
+    <div
+      id="box2"
+      style="
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        top: 80px;
+        background: blue;
+      "
+    ></div>
+  </body>
+  <script>
+    let box1 = document.querySelector("#box1");
+    let box2 = document.querySelector("#box2");
+    function MoveBoxOnePixel(node) {
+      let left = node.offsetLeft;
+      node.style.left = ((left + 1) % 600) + "px";
+    }
+    function Animatestep() {
+      MoveBoxOnePixel(box1);
+      requestAnimationFrame(() => Animatestep(box1));
+    }
+    function Timeoutstep(node) {
+      MoveBoxOnePixel(box2);
+      setTimeout(() => Timeoutstep(box2));
+    }
+    Animatestep();
+    Timeoutstep();
+  </script>
+</html>
