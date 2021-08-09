@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chapter 18</title>
+    <script src="./chapter18.js"></script>
+  </head>
+  <body>
+    <div id="BrowsersAndHTTP">
+      <p>Begin: Browsers and HTTP</p>
+      <form action="./example/message.html" method="get">
+        <p>
+          Name:
+          <input type="text" name="name" />
+        </p>
+        <p>
+          Messages:
+          <br />
+          <textarea name="message"></textarea>
+        </p>
+        <p><button type="submit">Send</button></p>
+      </form>
+      <div class="codeblocks">
+        <button onclick="BrowsersAndHTTP()">run BrowsersAndHTTP()</button>
+      </div>
+      <p>End: Browsers and HTTP</p>
+    </div>
+    <div id="Fetch">
+      <p>Begin: Fetch</p>
+      <button onclick="promiseFetch()">run promiseFetch()</button>
+      <button onclick="asyncFetch()">run asyncFetch()</button>
+      <button onclick="promiseDeleteFetch()">run promiseDeleteFetch()</button>
+      <button onclick=" promiseHeaderFetch()">run promiseHeaderFetch()</button>
+      <p>End: Fetch</p>
+    </div>
+    <div id="Focus">
+      <p>Begin: focus</p>
+      <input type="text" name="" id="focusinput" /><br />
+      <button onclick="focusAndBlur()">run focusAndBlur()</button>
+      <p>End: focus</p>
+    </div>
+    <div id="theFormAsAWhole">
+      <p>Begin: the form as a whole</p>
+      <form action="./example/message.html">
+        Name: <input type="text" name="name" id="name_tfaw" /><br />
+        Password:
+        <input type="password" name="password" id="password_tfaw" /><br />
+        <button type="submit">Log in</button>
+      </form>
+      <p>End: the form as a whole</p>
+      <script>
+        console.log("---the form as a whole---");
+        let form = document.querySelector("#theFormAsAWhole form");
+        console.log(form.elements.name.name);
+        console.log(form.elements[1].type);
+        console.log(
+          form.elements.name.form.elements.name.form.elements.name.name
+        );
+        form.addEventListener("submit", (event) => {
+          console.log("Loging in...");
+          event.preventDefault();
+        });
+        console.log("---the form as a whole end---");
+      </script>
+    </div>
+    <div id="textFields">
+      <p>Begin: text fields</p>
+      <textarea name="" id="" cols="30" rows="10"></textarea><br />
+      <input type="text" name="" id="" /> length: <span id="length">0</span>
+      <p>End: text fields</p>
+      <script>
+        let textarea = document.querySelector("#textFields textarea");
+        textarea.addEventListener("keydown", (event) => {
+          if (event.keyCode == 113) {
+            replaceSelection(textarea, "Khasekhemwy");
+          }
+        });
+        function replaceSelection(field, word) {
+          let from = field.selectionStart;
+          let to = field.selectionEnd;
+          field.value =
+            field.value.slice(0, from) + word + field.value.slice(to);
+          field.selectionStart = from + word.length;
+          field.selectionEnd = from + word.length;
+        }
+        let text = document.querySelector("#textFields input");
+        let output = document.querySelector("#length");
+        text.addEventListener("input", () => {
+          output.textContent = text.value.length;
+        });
+      </script>
+    </div>
+    <div id="checkboxesAndRadioButtons">
+      <p>Begin: chekboxes and radio buttons</p>
+      <label>
+        <input type="checkbox" name="" id="purple" /> Make this page purple
+      </label>
+      <br />
+      Color:
+      <label> <input type="radio" name="color" value="orange" /> Orange </label>
+      <label>
+        <input type="radio" name="color" value="lightgreen" /> Green
+      </label>
+      <label>
+        <input type="radio" name="color" value="lightblue" /> Blue
+      </label>
+      <p>End: cheboxes and radio buttons</p>
+      <script>
+        let checkbox = document.querySelector("#purple");
+        checkbox.addEventListener("change", () => {
+          document.body.style.background = checkbox.checked
+            ? "mediumpurple"
+            : "";
+        });
+        let buttons_carb = document.querySelectorAll("[name=color]");
+        console.log(buttons_carb);
+        for (let button of buttons_carb) {
+          button.addEventListener("change", () => {
+            document.body.style.background = button.value;
+          });
+        }
+      </script>
+    </div>
+    <div id="selectField">
+      <p>Begin: select field</p>
+      <select multiple>
+        <option value="1">0001</option>
+        <option value="2">0010</option>
+        <option value="4">0100</option>
+        <option value="8">1000</option>
+      </select>
+      = <span id="output_sf">0</span>
+      <p>End: select field</p>
+      <script>
+        let select = document.querySelector("#selectField select");
+        let output_sf = document.querySelector("#output_sf");
+        select.addEventListener("change", () => {
+          let number = 0;
+          for (let option of Array.from(select.options)) {
+            if (option.selected) {
+              number += Number(option.value);
+            }
+          }
+          output_sf.textContent = number;
+        });
+      </script>
+    </div>
+    <div id="fileFields">
+      <p>Begin: file fields</p>
+      <input type="file" />
+      <input type="file" id="file_multiple" multiple />
+      <p>End: file fields</p>
+      <script>
+        let input_ff = document.querySelector("#fileFields input");
+        let input_file_mul = document.querySelector("#file_multiple");
+        input_ff.addEventListener("change", () => {
+          if (input_ff.files.length > 0) {
+            let file = input_ff.files[0];
+            console.log("You chose", file.name);
+            if (file.type) console.log("It has type", file.type);
+          }
+        });
+        input_file_mul.addEventListener("change", () => {
+          for (let file of Array.from(input_file_mul.files)) {
+            readFileText(file).then((result) => {
+              console.log("file", file.name, "start with", result.slice(0, 20));
+            });
+          }
+        });
+      </script>
+    </div>
+    <div id="storingDataClientside">
+      <p>Begin: storing data client-side</p>
+      <button onclick="localstore()">run localstore()</button><br />
+      Notes:<select
+      ></select>
+      <button id="addnote">Add</button> <br />
+      <textarea cols="30" rows="10"></textarea>
+      <p>End: sotring data client-side</p>
+      <script>
+        storingDataClientside();
+      </script>
+    </div>
+  </body>
+</html>
