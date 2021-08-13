@@ -10,11 +10,10 @@ import { ToolSelect, ColorSelect } from "./control_pack.js";
 /** the pixel editor */
 class PixelEditor {
   /**
-   *
-   * @param {{picture: Picture, tool}} state the state
-   * @param {Object} config
+   * @param {State} state the state of the editor
+   * @param {Object} config the config of the editor
    */
-  constructor(state = defaultState, config = defaultConfig) {
+  constructor(state, config) {
     let { tools, controls, dispatch } = config;
     this.state = state;
     this.canvas = new PictureCanvas(this.state.picture, (pos) => {
@@ -31,12 +30,22 @@ class PixelEditor {
       ...this.controls.reduce((a, c) => a.concat(" ", c.dom), [])
     );
   }
+  /**
+   * sync the state
+   * @param {State} state the satete of the editor
+   */
   syncState(state) {
     this.state = state;
     this.canvas.syncState(state.picture);
     for (let ctrl of this.controls) ctrl.syncState(state);
   }
 }
+/**
+ * assign new value
+ * @param {State} state
+ * @param {Object} action
+ * @returns {State}
+ */
 function updateState(state, action) {
   // return Object.assign({}, state, action);
   return { ...state, ...action };
@@ -56,3 +65,18 @@ let default_editor = new PixelEditor(state, {
   },
 });
 export { PixelEditor, default_editor };
+
+/**
+ * @typedef State
+ * @type {Object}
+ * @property {String} tool the current selected tool
+ * @property {String} color the current selected color
+ * @property {Picture} picture the picture
+ */
+/**
+ * @typedef Config
+ * @type {Object}
+ * @property {Array.<Function>} tools a list of tools
+ * @property {Array.<Object>} controls a list of controls
+ * @property {Function} dispatch the dispatch funtion
+ */

@@ -93,7 +93,6 @@ class PictureCanvas {
     let move = (moveEvent) => {
       if (moveEvent.buttons == 0) {
         this.dom.removeEventListener("mousemove", move);
-        console.log("rm");
       } else {
         let newPos = pointerPosition(moveEvent, this.dom);
         if (newPos.x == pos.x && newPos.y == pos.y) return;
@@ -102,7 +101,6 @@ class PictureCanvas {
       }
     };
     this.dom.addEventListener("mousemove", move);
-    console.log("ad");
   }
   /**
    * add a touch event

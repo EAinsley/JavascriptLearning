@@ -1,3 +1,24 @@
+/**
+ * holds several useful drawing tools
+ * @module ToolPack
+ */
+/**
+ * @constant
+ */
+const around = [
+  { dx: -1, dy: 0 },
+  { dx: 1, dy: 0 },
+  { dx: 0, dy: -1 },
+  { dx: 0, dy: 1 },
+];
+
+/**
+ * draw one pixel on the picture
+ * @param {{x: Number, y: Number}} pos the postion
+ * @param {State} state the state of the pixel editor
+ * @param {DispatchCallback} dispatch the dispatch function
+ * @returns {DispatchCallback}
+ */
 function draw(pos, state, dispatch) {
   function drawPixel({ x, y }, state) {
     let drawn = { x, y, color: state.color };
@@ -7,6 +28,13 @@ function draw(pos, state, dispatch) {
   return drawPixel;
 }
 
+/**
+ * draw an rectangle on the picture
+ * @param {{x: Number, y: Number}} start the start position
+ * @param {State} state the state of the editor
+ * @param {DispatchCallback} dispatch the dispatch function
+ * @returns {DispatchCallback}
+ */
 function rectangle(start, state, dispatch) {
   function drawRectangle(pos) {
     let xStart = Math.min(start.x, pos.x);
@@ -25,13 +53,12 @@ function rectangle(start, state, dispatch) {
   return drawRectangle;
 }
 
-const around = [
-  { dx: -1, dy: 0 },
-  { dx: 1, dy: 0 },
-  { dx: 0, dy: -1 },
-  { dx: 0, dy: 1 },
-];
-
+/**
+ * to fill the area of the same color
+ * @param {{x: Number, y: Number}} param0 the position
+ * @param {State} state the state of the editor
+ * @param {DispatchCallback} dispatch  the dispatch callback
+ */
 function fill({ x, y }, state, dispatch) {
   let targetColor = state.picture.pixel(x, y);
   let drawn = [{ x, y, color: state.color }];
@@ -54,8 +81,28 @@ function fill({ x, y }, state, dispatch) {
   dispatch({ picture: state.picture.draw(drawn) });
 }
 
+/**
+ * to pick the color of one pixel
+ * @param {{x: Number, y:Number}} pos the postion
+ * @param {State} state the state of the editor
+ * @param {DispatchCallback} dispatch the dispatch function
+ */
 function pick(pos, state, dispatch) {
   dispatch({ color: state.picture.pixel(pos.x, pos.y) });
 }
 
 export { draw, rectangle, fill, pick };
+
+/**
+ * @callback DispatchCallback
+ * @param {{x:Number, y:Number}}
+ * @returns {?DispatchCallback}
+ */
+
+/**
+ * @typedef State
+ * @type {Object}
+ * @property {String} tool the current selected tool
+ * @property {String} color the current selected color
+ * @property {Picture} picture the picture
+ */
