@@ -4,7 +4,7 @@
  * `PictureCanvas` is the canvas element to displayd the picture.
  * @module Picture
  */
-import { elt } from "./utils.js";
+import { elt, drawPicture } from "./utils.js";
 /**
  * @constant {Number}
  * @default
@@ -124,24 +124,6 @@ class PictureCanvas {
     };
     this.dom.addEventListener("touchmove", move);
     this.dom.addEventListener("touchend", end);
-  }
-}
-
-/**
- * draw the picture on the given canvas
- * @param {Picture} picture the picture
- * @param {HTMLCanvasElement} canvas the canvas node
- * @param {Number} scale the number of the real pixels one pixel equals to
- */
-function drawPicture(picture, canvas, scale) {
-  canvas.width = picture.width * scale;
-  canvas.height = picture.height * scale;
-  let cx = canvas.getContext("2d");
-  for (let y = 0; y < picture.height; y++) {
-    for (let x = 0; x < picture.width; x++) {
-      cx.fillStyle = picture.pixel(x, y);
-      cx.fillRect(x * scale, y * scale, scale, scale);
-    }
   }
 }
 

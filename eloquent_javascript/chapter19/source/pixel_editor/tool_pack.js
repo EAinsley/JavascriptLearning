@@ -105,4 +105,6 @@ export { draw, rectangle, fill, pick };
  * @property {String} tool the current selected tool
  * @property {String} color the current selected color
  * @property {Picture} picture the picture
+ * @property {Array} done
+ * @property {Number} doneAt
  */

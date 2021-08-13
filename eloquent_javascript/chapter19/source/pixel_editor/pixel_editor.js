@@ -5,8 +5,42 @@
 import { elt } from "./utils.js";
 import { Picture, PictureCanvas } from "./picture.js";
 import { draw, fill, rectangle, pick } from "./tool_pack.js";
-import { ToolSelect, ColorSelect } from "./control_pack.js";
+import {
+  ToolSelect,
+  ColorSelect,
+  SaveButton,
+  LoadButton,
+  UndoButton,
+} from "./control_pack.js";
 
+/**
+ * @constant
+ * @default
+ */
+const startState = {
+  tool: "draw",
+  color: "#000000",
+  picture: Picture.empty(60, 30, "#f0f0f0"),
+  done: [],
+  doneAt: 0,
+};
+
+/**
+ * @constant
+ * @default
+ */
+const baseTools = { draw, fill, rectangle, pick };
+/**
+ * @constant
+ * @default
+ */
+const baseControls = [
+  ToolSelect,
+  ColorSelect,
+  SaveButton,
+  LoadButton,
+  UndoButton,
+];
 /** the pixel editor */
 class PixelEditor {
   /**
@@ -50,21 +84,40 @@ function updateState(state, action) {
   // return Object.assign({}, state, action);
   return { ...state, ...action };
 }
+function historyUpdateState(state, action) {
+  if (action.undo == true) {
+    if (state.done.length == 0) return state;
+    return Object.assign({}, state, {
+      picture: state.done[0],
+      done: state.done.slice(1),
+      doneAt: 0,
+    });
+  } else if (action.picture && state.doneAt < Date.now() - 1000) {
+    return Object.assign({}, state, action, {
+      done: [state.picture, ...state.done],
+      doneAt: Date.now(),
+    });
+  } else {
+    return Object.assign({}, state, action);
+  }
+}
 
-let state = {
-  tool: "draw",
-  color: "#000000",
-  picture: Picture.empty(60, 30, "#f0f0f0"),
-};
-let default_editor = new PixelEditor(state, {
-  tools: { draw, fill, rectangle, pick },
-  controls: [ToolSelect, ColorSelect],
-  dispatch(action) {
-    state = updateState(state, action);
-    default_editor.syncState(state);
-  },
-});
-export { PixelEditor, default_editor };
+function startPixelEditor({
+  state = startState,
+  tools = baseTools,
+  controls = baseControls,
+}) {
+  let app = new PixelEditor(state, {
+    tools,
+    controls,
+    dispatch(action) {
+      state = historyUpdateState(state, action);
+      app.syncState(state);
+    },
+  });
+  return app.dom;
+}
+export { PixelEditor, startPixelEditor };
 
 /**
  * @typedef State
@@ -72,6 +125,8 @@ export { PixelEditor, default_editor };
  * @property {String} tool the current selected tool
  * @property {String} color the current selected color
  * @property {Picture} picture the picture
+ * @property {Array} done
+ * @property {Number} doneAt
  */
 /**
  * @typedef Config
