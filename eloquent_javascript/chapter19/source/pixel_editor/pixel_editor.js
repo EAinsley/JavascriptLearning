@@ -58,12 +58,13 @@ class PixelEditor {
     this.controls = controls.map((Control) => new Control(state, config));
     this.dom = elt(
       "div",
-      {},
+      { tabIndex: 0, onkeydown: (event) => keyDown(event, config) },
       this.canvas.dom,
       elt("br"),
       ...this.controls.reduce((a, c) => a.concat(" ", c.dom), [])
     );
   }
+
   /**
    * sync the state
    * @param {State} state the satete of the editor
@@ -116,6 +117,30 @@ function startPixelEditor({
     },
   });
   return app.dom;
+}
+
+/**
+ * @param {KeyboardEvent} event
+ */
+function keyDown(event, config) {
+  if ((event.ctrlKey || event.metaKey) && event.key == "z") {
+    event.preventDefault();
+    config.dispatch({ undo: true });
+    return;
+  } else if (
+    !event.metaKey &&
+    !event.ctrlKey &&
+    !event.altKey &&
+    !event.shiftKey
+  ) {
+    for (let name of Object.keys(config.tools)) {
+      if (name[0] == event.key) {
+        event.preventDefault();
+        config.dispatch({ tool: name });
+        return;
+      }
+    }
+  }
 }
 export { PixelEditor, startPixelEditor };
 
