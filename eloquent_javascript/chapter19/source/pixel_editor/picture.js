@@ -77,8 +77,8 @@ class PictureCanvas {
    */
   syncState(picture) {
     if (this.picture == picture) return;
+    drawPicture(picture, this.dom, scale, this.picture);
     this.picture = picture;
-    drawPicture(this.picture, this.dom, scale);
   }
   /**
    * add a mouse down event
