@@ -2,6 +2,7 @@
  * holds several useful drawing tools
  * @module ToolPack
  */
+import { Picture } from "./picture.js";
 /**
  * @constant
  */
@@ -29,7 +30,7 @@ function draw(pos, state, dispatch) {
 }
 
 /**
- * draw an rectangle on the picture
+ * draw a rectangle on the picture
  * @param {{x: Number, y: Number}} start the start position
  * @param {State} state the state of the editor
  * @param {DispatchCallback} dispatch the dispatch function
@@ -51,6 +52,39 @@ function rectangle(start, state, dispatch) {
   }
   drawRectangle(start);
   return drawRectangle;
+}
+/**
+ * draw a circle
+ * @param {{x:Number, y:Number}} start the start position
+ * @param {State} state the state of the editor
+ * @param {DispatchCallback} dispatch the dispatch fucntion
+ * @return {DispatchCallback}
+ */
+function circle(center, state, dispatch) {
+  function drawCircle(end) {
+    let radius = Math.sqrt(
+      Math.pow(center.x - end.x, 2) + Math.pow(center.y - end.y, 2)
+    );
+    let drawn = [];
+    for (let dy = -Math.floor(radius); dy <= Math.floor(radius); dy++) {
+      for (let dx = -Math.floor(radius); dx <= Math.floor(radius); dx++) {
+        if (Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)) > radius) continue;
+        let x = center.x + dx;
+        let y = center.y + dy;
+        if (
+          x >= state.picture.width ||
+          x < 0 ||
+          y >= state.picture.height ||
+          y < 0
+        )
+          continue;
+        drawn.push({ x, y, color: state.color });
+      }
+    }
+    dispatch({ picture: state.picture.draw(drawn) });
+  }
+  drawCircle(center);
+  return drawCircle;
 }
 
 /**
@@ -91,7 +125,7 @@ function pick(pos, state, dispatch) {
   dispatch({ color: state.picture.pixel(pos.x, pos.y) });
 }
 
-export { draw, rectangle, fill, pick };
+export { draw, rectangle, fill, pick, circle };
 
 /**
  * @callback DispatchCallback

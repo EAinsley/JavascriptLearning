@@ -4,7 +4,7 @@
  */
 import { elt } from "./utils.js";
 import { Picture, PictureCanvas } from "./picture.js";
-import { draw, fill, rectangle, pick } from "./tool_pack.js";
+import { draw, fill, rectangle, pick, circle } from "./tool_pack.js";
 import {
   ToolSelect,
   ColorSelect,
@@ -29,7 +29,7 @@ const startState = {
  * @constant
  * @default
  */
-const baseTools = { draw, fill, rectangle, pick };
+const baseTools = { draw, fill, rectangle, pick, circle };
 /**
  * @constant
  * @default
