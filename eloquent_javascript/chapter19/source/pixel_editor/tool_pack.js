@@ -40,15 +40,9 @@ function draw(pos, state, dispatch) {
 function line(start, state, dispatch) {
   function drawLine(end) {
     let drawn = [];
-    let xDirection = Math.max(start.x, end.x) - Math.min(start.x, end.x);
-    let yDirection = Math.max(start.y, end.y) - Math.min(start.y, end.y);
-    if (!xDirection) {
-      let yStart = Math.min(start.y, end.y);
-      let yEnd = Math.max(start.y, end.y);
-      for (let y = yStart; y <= yEnd; y++) {
-        drawn.push({ x: end.x, y, color: state.color });
-      }
-    } else if (xDirection > yDirection) {
+    let xDirection = Math.abs(start.x - end.x);
+    let yDirection = Math.abs(start.y - end.y);
+    if (xDirection > yDirection) {
       let xStart = Math.min(start.x, end.x);
       let xEnd = Math.max(start.x, end.x);
       let yStart = start.x < end.x ? start.y : end.y;
