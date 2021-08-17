@@ -21,12 +21,65 @@ const around = [
  * @returns {DispatchCallback}
  */
 function draw(pos, state, dispatch) {
-  function drawPixel({ x, y }, state) {
-    let drawn = { x, y, color: state.color };
-    dispatch({ picture: state.picture.draw([drawn]) });
+  let lastpos = pos;
+  function drawPixel(nowpos, state) {
+    let drawLine = line(lastpos, state, dispatch);
+    lastpos = nowpos;
+    drawLine(nowpos);
   }
   drawPixel(pos, state);
   return drawPixel;
+}
+
+/**
+ * draw a line
+ * @param {{x:Number, y:Nymber}} start the start position
+ * @param {State} state the state of the pixel editor
+ * @param {DispatchCallback} dispatch the dispatch function
+ */
+function line(start, state, dispatch) {
+  function drawLine(end) {
+    let drawn = [];
+    let xDirection = Math.max(start.x, end.x) - Math.min(start.x, end.x);
+    let yDirection = Math.max(start.y, end.y) - Math.min(start.y, end.y);
+    if (!xDirection) {
+      let yStart = Math.min(start.y, end.y);
+      let yEnd = Math.max(start.y, end.y);
+      for (let y = yStart; y <= yEnd; y++) {
+        drawn.push({ x: end.x, y, color: state.color });
+      }
+    } else if (xDirection > yDirection) {
+      let xStart = Math.min(start.x, end.x);
+      let xEnd = Math.max(start.x, end.x);
+      let yStart = start.x < end.x ? start.y : end.y;
+      let yUnit = (start.y - end.y) / (start.x - end.x);
+      for (let x = xStart, yFloat = yStart; x <= xEnd; x++, yFloat += yUnit) {
+        if (yFloat >= 0 && yFloat < state.picture.height)
+          drawn.push({
+            x,
+            y: Math.round(yFloat),
+            color: state.color,
+          });
+      }
+    } else {
+      let yStart = Math.min(start.y, end.y);
+      let yEnd = Math.max(start.y, end.y);
+      let xStart = start.y < end.y ? start.x : end.x;
+      let xUnit = (start.x - end.x) / (start.y - end.y);
+      for (let y = yStart, xFloat = xStart; y <= yEnd; y++, xFloat += xUnit) {
+        if (xFloat >= 0 && xFloat < state.picture.width)
+          drawn.push({
+            x: Math.round(xFloat),
+            y,
+            color: state.color,
+          });
+      }
+    }
+
+    dispatch({ picture: state.picture.draw(drawn) });
+  }
+  drawLine(start);
+  return drawLine;
 }
 
 /**
@@ -55,7 +108,7 @@ function rectangle(start, state, dispatch) {
 }
 /**
  * draw a circle
- * @param {{x:Number, y:Number}} start the start position
+ * @param {{x:Number, y:Number}} center the center of the circle
  * @param {State} state the state of the editor
  * @param {DispatchCallback} dispatch the dispatch fucntion
  * @return {DispatchCallback}
@@ -125,7 +178,7 @@ function pick(pos, state, dispatch) {
   dispatch({ color: state.picture.pixel(pos.x, pos.y) });
 }
 
-export { draw, rectangle, fill, pick, circle };
+export { draw, rectangle, fill, pick, circle, line };
 
 /**
  * @callback DispatchCallback

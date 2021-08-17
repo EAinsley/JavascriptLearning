@@ -136,8 +136,8 @@ class PictureCanvas {
 function pointerPosition(pos, domNode) {
   let rect = domNode.getBoundingClientRect();
   return {
-    x: Math.floor((pos.clientX - rect.left) / scale),
-    y: Math.floor((pos.clientY - rect.top) / scale),
+    x: Math.max(Math.floor((pos.clientX - rect.left) / scale), 0),
+    y: Math.max(Math.floor((pos.clientY - rect.top) / scale), 0),
   };
 }
 
