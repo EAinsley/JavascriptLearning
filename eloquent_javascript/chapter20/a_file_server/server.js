@@ -1,7 +1,7 @@
 "use strict";
 const { createServer } = require("http");
-const { parse } = require("url");
-const { resolve, sep } = require("path");
+const { URL } = require("url");
+const { sep } = require("path");
 const { createReadStream, createWriteStream } = require("fs");
 const { stat, readdir, rmdir, unlink } = require("fs").promises;
 
@@ -35,7 +35,8 @@ methods.GET = async function (request) {
     else return { status: 404, body: "File not found" };
   }
   if (stats.isDirectory()) {
-    return { body: await readdir(path).join("\n") };
+    console.log(path);
+    return { body: (await readdir(path)).join("\n") };
   } else {
     return { body: createReadStream(path), type: mime.getType(path) };
   }
@@ -69,15 +70,16 @@ function pipeStream(from, to) {
     from.pipe(to);
   });
 }
-// ! use WHATWG URL API to write
 function urlPath(url) {
-  let { pathname } = parse(url);
-  let path = resolve(decodeURIComponent(pathname).slice(1));
-  console.log(path);
-  if (path != baseDirectory && !path.startsWith(baseDirectory + sep)) {
+  let { pathname: path } = new URL(url, "resolve://");
+  const { pathname, search, hash } = new URL(
+    path.slice(1),
+    new URL(baseDirectory + sep, "resolve://")
+  );
+  if (pathname != baseDirectory && !pathname.startsWith(baseDirectory + sep)) {
     throw { status: 403, body: "Forbidden" };
   }
-  return path;
+  return pathname + search + hash;
 }
 
 async function notAllowed(request) {
