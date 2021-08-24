@@ -9,7 +9,6 @@ const mime = require("mime");
 
 const methods = Object.create(null);
 const baseDirectory = process.cwd();
-console.log(baseDirectory);
 
 createServer((request, response) => {
   let handler = methods[request.method] || notAllowed;
@@ -35,7 +34,6 @@ methods.GET = async function (request) {
     else return { status: 404, body: "File not found" };
   }
   if (stats.isDirectory()) {
-    console.log(path);
     return { body: (await readdir(path)).join("\n") };
   } else {
     return { body: createReadStream(path), type: mime.getType(path) };
