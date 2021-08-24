@@ -9,6 +9,7 @@ const mime = require("mime");
 
 const methods = Object.create(null);
 const baseDirectory = process.cwd();
+console.log(baseDirectory);
 
 createServer((request, response) => {
   let handler = methods[request.method] || notAllowed;
@@ -72,6 +73,7 @@ function pipeStream(from, to) {
 function urlPath(url) {
   let { pathname } = parse(url);
   let path = resolve(decodeURIComponent(pathname).slice(1));
+  console.log(path);
   if (path != baseDirectory && !path.startsWith(baseDirectory + sep)) {
     throw { status: 403, body: "Forbidden" };
   }
