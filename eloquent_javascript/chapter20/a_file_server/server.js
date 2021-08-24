@@ -1,6 +1,7 @@
 "use strict";
 const { createServer } = require("http");
 const { URL } = require("url");
+const { sep } = require("path");
 const { createReadStream, createWriteStream } = require("fs");
 const { stat, readdir, rmdir, unlink } = require("fs").promises;
 
@@ -71,13 +72,11 @@ function pipeStream(from, to) {
 }
 function urlPath(url) {
   let { pathname: path } = new URL(url, "resolve://");
-  const resolveUrl = new URL(
+  const { pathname, search, hash } = new URL(
     path.slice(1),
-    new URL(baseDirectory, "resolve://")
+    new URL(baseDirectory + sep, "resolve://")
   );
-  const { pathname, search, hash } = resolveUrl;
-  console.log(pathname);
-  if (pathname != baseDirectory && !pathname.startsWith(baseDirectory)) {
+  if (pathname != baseDirectory && !pathname.startsWith(baseDirectory + sep)) {
     throw { status: 403, body: "Forbidden" };
   }
   return pathname + search + hash;
