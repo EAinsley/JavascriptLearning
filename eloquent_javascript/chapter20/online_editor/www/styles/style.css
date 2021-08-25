@@ -1,0 +1,28 @@
+#container {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  margin: 20px;
+}
+#editor {
+  display: flex;
+  flex-flow: column;
+  flex: 1 1;
+}
+
+#save {
+  height: 50px;
+  background-color: green;
+  color: white;
+}
+textarea {
+  display: flex;
+  resize: none;
+  height: 80vh;
+}
+
+iframe {
+  display: flex;
+  height: 90vh;
+  flex: 1 1;
+}
