@@ -11,7 +11,7 @@ GET可以获取files下的文件。
 
 ## todo
 
-- [ ] PUT, DELETE, MKCOL 的权限
-- [ ] 获取文件列表屏显示
+- [x] PUT, DELETE, MKCOL 的权限
+- [ ] 获取文件列表并显示
 - [ ] 支持选择文件/文件夹
 - [ ] 新建文件/文件夹

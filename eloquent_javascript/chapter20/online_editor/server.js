@@ -9,6 +9,11 @@ const mime = require("mime");
 
 const methods = Object.create(null);
 const baseDirectory = process.cwd();
+const fileapi = sep + "files" + sep;
+const pageapi = sep + "www" + sep;
+
+const HTTPNoContent = { status: 204 };
+const HTTPForbbiden = { status: 403, body: "Forbbiden" };
 
 createServer((request, response) => {
   let handler = methods[request.method] || notAllowed;
@@ -30,11 +35,14 @@ createServer((request, response) => {
 methods.GET = async function (request) {
   let path = urlPath(request.url);
   let stats;
-  if (path == baseDirectory + sep + "www" + sep) {
-    return {
-      body: createReadStream("./www/pages/index.html"),
-      type: "text/html",
-    };
+  if (path.startsWith(baseDirectory + pageapi)) {
+    if (path == baseDirectory + pageapi) {
+      return {
+        body: createReadStream("./www/pages/index.html"),
+        type: "text/html",
+      };
+    }
+    if (path.endsWith(sep)) return HTTPForbbiden;
   }
   try {
     stats = await stat(path);
@@ -51,36 +59,39 @@ methods.GET = async function (request) {
 
 methods.DELETE = async function (request) {
   let path = urlPath(request.url);
+  if (!path.startsWith(baseDirectory + fileapi)) return HTTPForbbiden;
   let stats;
   try {
     stats = await stat(path);
   } catch (error) {
     if (error.code != "ENOENT") throw error;
-    else return { status: 204 };
+    else return HTTPNoContent;
   }
   if (stats.isDirectory()) await rmdir(path);
   else await unlink(path);
-  return { status: 204 };
+  return HTTPNoContent;
 };
 
 methods.PUT = async function (request) {
   let path = urlPath(request.url);
+  if (!path.startsWith(baseDirectory + fileapi)) return HTTPForbbiden;
   await pipeStream(request, createWriteStream(path));
-  return { status: 204 };
+  return HTTPNoContent;
 };
 
 methods.MKCOL = async function (request) {
   let path = urlPath(request.url);
+  if (!path.startsWith(baseDirectory + fileapi)) return HTTPForbbiden;
   let stats;
   try {
     stats = await stat(path);
   } catch (error) {
     if (error.code != "ENOENT") throw error;
     await mkdir(path);
-    return { status: 204 };
+    return HTTPNoContent;
   }
-  if (stats.isDirectory()) return { status: 204 };
-  else return { status: 400, body: `${path} is a file.` };
+  if (stats.isDirectory()) return HTTPNoContent;
+  else return { status: 400, body: "File exist" };
 };
 
 function pipeStream(from, to) {
@@ -94,15 +105,17 @@ function pipeStream(from, to) {
 function urlPath(url) {
   let { pathname: path } = new URL(url, "resolve://");
   let base = baseDirectory;
-  if (!path.startsWith(sep + "files" + sep)) {
-    base += sep + "www";
+  if (!path.startsWith(fileapi)) {
+    base += pageapi;
+  } else {
+    base += sep;
   }
   const { pathname, search, hash } = new URL(
     path.slice(1),
-    new URL(base + sep, "resolve://")
+    new URL(base, "resolve://")
   );
   if (pathname != baseDirectory && !pathname.startsWith(baseDirectory + sep)) {
-    throw { status: 403, body: "Forbidden" };
+    throw HTTPForbbiden;
   }
   return pathname + search + hash;
 }
