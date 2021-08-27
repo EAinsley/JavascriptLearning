@@ -7,6 +7,7 @@
 #editor {
   display: flex;
   flex-flow: column;
+  height: 90vh;
   flex: 1 1;
 }
 
@@ -15,14 +16,40 @@
   background-color: green;
   color: white;
 }
+#button_group {
+  display: flex;
+}
+
+aside {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+}
+
 textarea {
   display: flex;
   resize: none;
-  height: 80vh;
+  height: 60vh;
 }
-
 iframe {
   display: flex;
-  height: 90vh;
+  height: auto;
   flex: 1 1;
+}
+menu {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  border: steelblue solid 1px;
+  padding: 0px;
+  user-select: none;
+}
+li {
+  list-style: none;
+  user-select: none;
+  padding-left: 20px;
+}
+li:hover {
+  background-color: grey;
+  color: white;
 }

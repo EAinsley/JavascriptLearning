@@ -51,7 +51,20 @@ methods.GET = async function (request) {
     else return { status: 404, body: "File not found" };
   }
   if (stats.isDirectory()) {
-    return { body: (await readdir(path)).join("\n") };
+    let body = [];
+    const items = await readdir(path);
+    for (const item of items) {
+      body.push(
+        stat(path + sep + item).then((s) => {
+          return {
+            name: item,
+            isDir: s.isDirectory(),
+          };
+        })
+      );
+    }
+    body = await Promise.all(body);
+    return { body: JSON.stringify(body) };
   } else {
     return { body: createReadStream(path), type: mime.getType(path) };
   }
