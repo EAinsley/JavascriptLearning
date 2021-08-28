@@ -1,71 +1,13 @@
+import { Editor } from "./editor.js";
+
 window.addEventListener("load", main);
 
 function main() {
-  const baseurl = "http://localhost:8000";
-  const fileapi = "/files";
-  const filepath = "/anotherfile.html";
-  const textarea = document.querySelector("textarea");
-  const save_button = document.querySelector("#save_button");
-  const menu = document.querySelector("menu");
-  const iframe = document.querySelector("iframe");
-  refreshmenu("/");
-  save_button.addEventListener("click", savefile);
-
-  function savefile() {
-    const content = textarea.value;
-    fetch(baseurl + fileapi + filepath, {
-      method: "PUT",
-      body: content,
-    });
-    iframe.contentWindow.location.reload();
-    console.log("saved!");
-  }
-  /**
-   *
-   * @param {HTMLMenuElement} menu
-   * @param {String} directory
-   */
-  function refreshmenu(directory) {
-    fetch(baseurl + fileapi + directory, { method: "GET" })
-      .then((resp) => resp.json())
-      .then((data) => {
-        const cd = () =>
-          refreshmenu(
-            directory.slice(
-              0,
-              directory.slice(0, directory.length - 1).lastIndexOf("/")
-            ) + "/"
-          );
-        menu.appendChild(elt("li", { ondblclick: cd }, ".."));
-        for (const datum of data) {
-          const opendir = () => refreshmenu(directory + datum.name + "/");
-          if (datum.isDir) {
-            menu.appendChild(
-              elt("li", { ondblclick: opendir }, datum.name + "/")
-            );
-          }
-        }
-        for (const datum of data) {
-          if (!datum.isDir) {
-            const loadfile = () => {
-              openfile(directory + datum.name);
-            };
-            menu.appendChild(elt("li", { ondblclick: loadfile }, datum.name));
-          }
-        }
-      });
-    while (menu.firstChild) menu.lastChild.remove();
-  }
-  function openfile(filepath) {
-    iframe.src = baseurl + fileapi + filepath;
-    fetch(baseurl + fileapi + filepath, {
-      method: "GET",
-    })
-      .then((resp) => resp.text())
-      .then((text) => {
-        textarea.value = text;
-      });
-  }
+  const initstate = { currentfile: "", currentdir: "/" };
+  const initconfig = { baseurl: "http://localhost:8000/files" };
+  const editor = new Editor(initstate, initconfig);
+  document.body.appendChild(editor.dom);
+  // save_button.addEventListener("click", savefile);
 }
 
 function elt(type, props, ...children) {

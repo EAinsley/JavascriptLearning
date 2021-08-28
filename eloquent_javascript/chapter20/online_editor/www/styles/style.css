@@ -24,6 +24,7 @@ aside {
   display: flex;
   flex-direction: column;
   margin-right: 10px;
+  min-width: 20vw;
 }
 
 textarea {
