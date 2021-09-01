@@ -1,15 +1,14 @@
-import { elt } from "./util.js";
+import { Control, elt } from "./util.js";
 
-class Menu {
-  constructor(state, config, dispatch) {
-    this.state = state;
-    this.config = config;
-    this.dispatch = dispatch;
+class Menu extends Control {
+  constructor(state, config) {
+    super(state, config);
     this.dom = elt("menu", { id: "filelist" });
     this.newfile = elt("button", {}, "new file");
     this.newdir = elt("button", {}, "new directory");
-    this.tools = [this.newfile, this.newdir];
-    refreshmenue(this.dom, config.baseurl, state.currentdir, dispatch);
+    this.deletedir = elt("button", {}, "delete directory");
+    this.tools = [this.newfile, this.newdir, this.deletedir];
+    refreshmenue(this.dom, config.baseurl, state.currentdir, this.dispatch);
   }
   syncState(state) {
     this.state = state;

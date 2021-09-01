@@ -18,13 +18,15 @@
 }
 #button_group {
   display: flex;
+  flex-wrap: wrap;
 }
 
 aside {
   display: flex;
   flex-direction: column;
   margin-right: 10px;
-  min-width: 20vw;
+  max-width: 300px;
+  flex: 0.5 1;
 }
 
 textarea {

@@ -1,4 +1,4 @@
-import { startEditor } from "./online_editor/editor.js";
+import { startEditor } from "./online_editor/online_editor.js";
 
 window.addEventListener("load", main);
 
