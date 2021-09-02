@@ -1,10 +1,10 @@
 class Control {
   constructor(state, config) {
     this.state = state;
-    this.config = config;
+    this.baseurl = config.baseurl;
     this.dispatch = config.dispatch;
   }
-  syncState(state) {
+  syncState(state, command) {
     this.state = state;
   }
 }

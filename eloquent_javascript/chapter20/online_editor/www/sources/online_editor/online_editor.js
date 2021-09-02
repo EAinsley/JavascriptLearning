@@ -3,7 +3,12 @@ import { Menu } from "./menu.js";
 import { Editor } from "./editor.js";
 import { ButtonGroup } from "./buttongroup.js";
 
-const startState = { currentfile: "", currentdir: "/" };
+const startState = {
+  currentfile: "",
+  currentdir: "/",
+  openfile: false,
+  opendir: true,
+};
 const startConfig = {
   baseurl: "http://localhost:8000/files",
   layout: {
@@ -50,49 +55,36 @@ class OnlieEditor {
     this.controls = control;
     this.tools = [];
     for (const control of this.controls) {
-      if (control.tools) this.tools = this.tools.concat(control.tools);
+      if (control.tools) {
+        for (let { tool, hotkey } of control.tools) {
+          this.tools.push(tool);
+          registerHotkey(this.dom, hotkey, () => tool.click());
+        }
+      }
       if (control instanceof ButtonGroup) this.buttons = control;
     }
     this.buttons.setTools(this.tools);
   }
-  openfile(filename) {
-    this.state.currentfile = filename;
-    fetch(this.config.baseurl + this.state.currentdir + filename, {
-      method: "GET",
-    })
-      .then((resp) => resp.text())
-      .then((text) => {
-        this.iframe.src =
-          this.config.baseurl + this.state.currentdir + filename;
-        this.textarea.value = text;
-      });
-  }
-  savefile() {
-    const content = this.textarea.value;
-    fetch(
-      this.config.baseurl + this.state.currentdir + this.state.currentfile,
-      {
-        method: "PUT",
-        body: content,
-      }
-    );
-    this.iframe.contentWindow.location.reload();
-    console.log("saved!");
-  }
-  newfile() {
-    const newfilename = prompt("filename:");
-    fetch(this.config.baseurl + this.state.currentdir + newfilename, {
-      method: "PUT",
-    }).then((resp) => {
-      if (resp.ok) {
-        this.state.currentfile = newfilename;
-      }
-    });
-  }
-  syncState(state) {
+  syncState(state, command) {
     this.state = state;
-    for (const control of this.controls) control.syncState(state);
+    for (const control of this.controls) control.syncState(state, command);
   }
+}
+
+function registerHotkey(dom, hotkey, func) {
+  function keydown(event) {
+    if (
+      (hotkey.ctrlKey ^ event.ctrlKey && hotkey.metaKey ^ event.metaKey) ||
+      hotkey.shiftKey ^ event.shiftKey ||
+      hotkey.altKey ^ event.altKey
+    )
+      return;
+    if (hotkey.key == event.key) {
+      event.preventDefault();
+      func();
+    }
+  }
+  document.body.addEventListener("keydown", keydown);
 }
 
 function updateState(state, action) {
@@ -103,9 +95,9 @@ function startEditor({ state = startState, config = startConfig }) {
   let app = new OnlieEditor(state, {
     baseurl: config.baseurl,
     layout: config.layout,
-    dispatch(action) {
+    dispatch(action, command) {
       state = updateState(state, action);
-      app.syncState(state);
+      app.syncState(state, command);
     },
   });
   return app.dom;
