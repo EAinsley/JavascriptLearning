@@ -4,7 +4,7 @@ class Control {
     this.baseurl = config.baseurl;
     this.dispatch = config.dispatch;
   }
-  syncState(state, command) {
+  syncState(state) {
     this.state = state;
   }
   executeCommand() {}
