@@ -3,7 +3,14 @@ import { Control, elt } from "./util.js";
 class Editor extends Control {
   constructor(state, config) {
     super(state, config);
-    this.textarea = elt("textarea");
+    this.textarea = elt("textarea", {
+      oninput: () => {
+        this.dispatch({ value: this.textarea.value }, { refreshpreview: true });
+      },
+      onchange: () => {
+        this.dispatch({ value: this.textarea.value }, { refreshpreview: true });
+      },
+    });
     this.preview = elt("iframe");
     this.name = elt("p");
     this.save = elt("button", { onclick: () => saveFile(this) }, "save file");
@@ -19,63 +26,41 @@ class Editor extends Control {
       this.textarea,
       this.preview
     );
-    this.tools = [
-      { tool: this.save, hotkey: { ctrlKey: true, metaKey: true, key: "s" } },
-      { tool: this.delete, hotkey: { ctrlKey: true, metaKey: true, key: "d" } },
-    ];
   }
 
-  syncState(state, { openfile = false, clearfile = false }) {
+  syncState(state) {
     this.state = state;
+    this.textarea.value = state.value;
+    if (this.state.currentfile) {
+      this.name.textContent = `${this.state.currentfile}`;
+      this.preview.src = this.baseurl + this.state.currentfile;
+    } else this.name.textContent = `${this.state.currentdir}`;
+  }
+
+  executeCommand({
+    openfile = false,
+    clearfile = false,
+    refreshpreview = false,
+  }) {
     if (openfile) {
-      const fileulr =
-        this.baseurl + this.state.currentdir + this.state.currentfile;
+      const fileulr = this.baseurl + this.state.currentfile;
       fetch(fileulr, { method: "GET" })
         .then((resp) => {
           if (resp.ok) {
-            this.preview.src = fileulr;
-            this.name.textContent =
-              `${this.state.currentfile}` + ` (${this.state.currentdir})`;
             return resp.text();
           }
         })
-        .then((text) => (this.textarea.value = text));
+        .then((text) => {
+          this.dispatch({ value: text });
+        });
+    }
+    if (refreshpreview) {
+      this.preview.src = this.baseurl + this.state.currentfile;
     }
     if (clearfile) {
-      this.textarea.value = "";
-      this.name.textContent = "";
-      this.preview.src = "";
+      this.dispatch({ value: "", currentfile: "" });
     }
   }
-}
-
-function deleteFile(that) {
-  if (that.state.currentfile) {
-    const confirmDelete = window.confirm(
-      `Do you want to delete: ${that.state.currentfile} ` +
-        `(${that.state.currentdir})?`
-    );
-    if (confirmDelete)
-      fetch(that.baseurl + that.state.currentdir + that.state.currentfile, {
-        method: "DELETE",
-      }).then(() => {
-        that.dispatch(
-          { currentfile: "" },
-          { clearfile: true, refreshdir: true }
-        );
-      });
-  }
-}
-
-function saveFile(that) {
-  if (!that.state.currentfile) return;
-  const fileurl = that.baseurl + that.state.currentdir + that.state.currentfile;
-  fetch(fileurl, { method: "PUT", body: that.textarea.value }).then((resp) => {
-    if (resp.ok) {
-      that.preview.src = fileurl;
-    }
-    console.log("saved");
-  });
 }
 
 export { Editor };

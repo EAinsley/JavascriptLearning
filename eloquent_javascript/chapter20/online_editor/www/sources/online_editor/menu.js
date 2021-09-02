@@ -17,25 +17,13 @@ class Menu extends Control {
       { onclick: () => newDir(this) },
       "delete directory"
     );
-    this.tools = [
-      {
-        tool: this.newfile,
-        hotkey: { metaKey: true, ctrlKey: true, key: "b" },
-      },
-      {
-        tool: this.newdir,
-        hotkey: { metaKey: true, ctrlKey: true, shifKey: true, key: "b" },
-      },
-      {
-        tool: this.deletedir,
-        hotkey: { metaKey: true, ctrlKey: true, shifKey: true },
-        key: "d",
-      },
-    ];
+
     refreshmenue(this.dom, config.baseurl, state.currentdir, this.dispatch);
   }
-  syncState(state, { opendir = false, refreshdir = false }) {
+  syncState(state) {
     this.state = state;
+  }
+  executeCommand({ opendir = false, refreshdir = false }) {
     if (opendir || refreshdir)
       refreshmenue(
         this.dom,
@@ -88,7 +76,10 @@ function refreshmenue(dom, root, directory, dispatch) {
             "li",
             {
               ondblclick: () =>
-                dispatch({ currentfile: datum.name }, { openfile: true }),
+                dispatch(
+                  { currentfile: directory + datum.name },
+                  { openfile: true }
+                ),
             },
             datum.name
           );
@@ -107,30 +98,4 @@ function getparentdir(directory) {
   );
 }
 
-function newFile(that) {
-  const filename = prompt("Enter file name?");
-  if (filename === null) return;
-  const fileurl = that.baseurl + that.state.currentdir + filename;
-  fetch(fileurl, { method: "PUT" }).then((resp) => {
-    if (resp.ok) {
-      that.dispatch(
-        { currentfile: filename },
-        { openfile: true, refreshdir: true }
-      );
-      return;
-    }
-    console.log(resp);
-  });
-}
-
-function newDir(that) {
-  const dirname = prompt("Enter directory name?");
-  if (dirname === null) return;
-  const dirurl = that.baseurl + that.state.dirname;
-  fetch(dirurl, { method: "MKCOL" }).then((resp) => {
-    if (resp.ok) {
-      that.dispatch({}, { refreshdir: true });
-    }
-  });
-}
 export { Menu };

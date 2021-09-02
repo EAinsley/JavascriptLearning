@@ -2,12 +2,14 @@ import { Control, elt } from "./util.js";
 import { Menu } from "./menu.js";
 import { Editor } from "./editor.js";
 import { ButtonGroup } from "./buttongroup.js";
+import { deleteFile, newFile, saveFile } from "./tools.js";
 
 const startState = {
   currentfile: "",
   currentdir: "/",
   openfile: false,
   opendir: true,
+  value: "",
 };
 const startConfig = {
   baseurl: "http://localhost:8000/files",
@@ -23,6 +25,7 @@ const startConfig = {
       Editor,
     ],
   },
+  tools: [deleteFile, saveFile, newFile],
 };
 
 function buildeditor(component, state, config, dispatch) {
@@ -53,38 +56,24 @@ class OnlieEditor {
     );
     this.dom = dom;
     this.controls = control;
-    this.tools = [];
     for (const control of this.controls) {
-      if (control.tools) {
-        for (let { tool, hotkey } of control.tools) {
-          this.tools.push(tool);
-          registerHotkey(this.dom, hotkey, () => tool.click());
-        }
+      if (control instanceof ButtonGroup) {
+        this.buttons = control;
+        this.buttons.setTools(this.config.tools);
+        return;
       }
-      if (control instanceof ButtonGroup) this.buttons = control;
     }
-    this.buttons.setTools(this.tools);
   }
   syncState(state, command) {
     this.state = state;
-    for (const control of this.controls) control.syncState(state, command);
-  }
-}
-
-function registerHotkey(dom, hotkey, func) {
-  function keydown(event) {
-    if (
-      (hotkey.ctrlKey ^ event.ctrlKey && hotkey.metaKey ^ event.metaKey) ||
-      hotkey.shiftKey ^ event.shiftKey ||
-      hotkey.altKey ^ event.altKey
-    )
-      return;
-    if (hotkey.key == event.key) {
-      event.preventDefault();
-      func();
+    for (const control of this.controls) {
+      if (state) control.syncState(state);
     }
   }
-  document.body.addEventListener("keydown", keydown);
+  executeCommand(command) {
+    for (const control of this.controls)
+      if (command) control.executeCommand(command);
+  }
 }
 
 function updateState(state, action) {
@@ -95,9 +84,11 @@ function startEditor({ state = startState, config = startConfig }) {
   let app = new OnlieEditor(state, {
     baseurl: config.baseurl,
     layout: config.layout,
+    tools: config.tools,
     dispatch(action, command) {
       state = updateState(state, action);
-      app.syncState(state, command);
+      app.syncState(state);
+      app.executeCommand(command);
     },
   });
   return app.dom;

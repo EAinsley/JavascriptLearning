@@ -7,6 +7,7 @@ class Control {
   syncState(state, command) {
     this.state = state;
   }
+  executeCommand() {}
 }
 
 function elt(type, props, ...children) {
