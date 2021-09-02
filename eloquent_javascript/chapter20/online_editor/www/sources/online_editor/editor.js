@@ -5,7 +5,7 @@ class Editor extends Control {
     super(state, config);
     this.textarea = elt("textarea", {
       oninput: () => {
-        this.dispatch({ value: this.textarea.value }, { refreshpreview: true });
+        this.dispatch({ value: this.textarea.value });
       },
       onchange: () => {
         this.dispatch({ value: this.textarea.value }, { refreshpreview: true });
@@ -28,13 +28,16 @@ class Editor extends Control {
     );
   }
 
-  syncState(state) {
-    this.state = state;
-    this.textarea.value = state.value;
-    if (this.state.currentfile) {
-      this.name.textContent = `${this.state.currentfile}`;
-      this.preview.src = this.baseurl + this.state.currentfile;
-    } else this.name.textContent = `${this.state.currentdir}`;
+  syncState({ value, currentdir, currentfile }) {
+    this.textarea.value = value;
+    this.state.value = value;
+    if (currentfile != this.state.currentfile) {
+      this.state.currentfile = currentfile;
+      if (currentfile) {
+        this.name.textContent = `${currentfile}`;
+        this.preview.src = this.baseurl + currentfile;
+      } else this.name.textContent = `${currentdir}`;
+    }
   }
 
   executeCommand({

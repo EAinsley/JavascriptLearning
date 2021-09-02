@@ -80,7 +80,7 @@ methods.DELETE = async function (request) {
     if (error.code != "ENOENT") throw error;
     else return HTTPNoContent;
   }
-  if (stats.isDirectory()) await rmdir(path);
+  if (stats.isDirectory()) await rmdir(path, { recursive: true });
   else await unlink(path);
   return HTTPNoContent;
 };

@@ -2,7 +2,7 @@ import { Control, elt } from "./util.js";
 import { Menu } from "./menu.js";
 import { Editor } from "./editor.js";
 import { ButtonGroup } from "./buttongroup.js";
-import { deleteFile, newFile, saveFile } from "./tools.js";
+import { deleteDir, deleteFile, newDir, newFile, saveFile } from "./tools.js";
 
 const startState = {
   currentfile: "",
@@ -25,7 +25,7 @@ const startConfig = {
       Editor,
     ],
   },
-  tools: [deleteFile, saveFile, newFile],
+  tools: [deleteFile, saveFile, newFile, newDir, deleteDir],
 };
 
 function buildeditor(component, state, config, dispatch) {

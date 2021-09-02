@@ -1,4 +1,4 @@
-import { Control, elt } from "./util.js";
+import { Control, getparentdir, elt } from "./util.js";
 
 class Menu extends Control {
   constructor(state, config) {
@@ -88,14 +88,6 @@ function refreshmenue(dom, root, directory, dispatch) {
       }
     });
   while (dom.firstChild) dom.lastChild.remove();
-}
-function getparentdir(directory) {
-  return (
-    directory.slice(
-      0,
-      directory.slice(0, directory.length - 1).lastIndexOf("/")
-    ) + "/"
-  );
 }
 
 export { Menu };

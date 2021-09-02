@@ -19,4 +19,13 @@ function elt(type, props, ...children) {
   }
   return dom;
 }
-export { elt, Control };
+
+function getparentdir(directory) {
+  return (
+    directory.slice(
+      0,
+      directory.slice(0, directory.length - 1).lastIndexOf("/")
+    ) + "/"
+  );
+}
+export { elt, getparentdir, Control };

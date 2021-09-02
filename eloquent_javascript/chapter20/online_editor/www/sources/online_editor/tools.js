@@ -1,5 +1,7 @@
+import { getparentdir } from "./util.js";
+
 const deleteFile = {
-  tool: function deleteFile(state, baseurl, dispatch) {
+  tool: (state, baseurl, dispatch) => {
     if (state.currentfile) {
       const confirmDelete = window.confirm(
         `Do you want to delete: ${state.currentfile} ` +
@@ -13,13 +15,13 @@ const deleteFile = {
         });
     }
   },
-  name: "delete file",
+  name: "delete file (ctrl + d)",
   hotkey: { ctrlKey: true, metaKey: true, key: "d" },
 };
 const saveFile = {
-  tool: function saveFile(state, baseurl, dispatch) {
+  tool: (state, baseurl, dispatch) => {
     if (!state.currentfile) return;
-    const fileurl = baseurl + state.currentdir + state.currentfile;
+    const fileurl = baseurl + state.currentfile;
     fetch(fileurl, { method: "PUT", body: state.value }).then((resp) => {
       if (resp.ok) {
         dispatch({}, { refreshpreview: true });
@@ -27,12 +29,12 @@ const saveFile = {
       console.log("saved");
     });
   },
-  name: "save file",
+  name: "save file (ctrl + s)",
   hotkey: { ctrlKey: true, metaKey: true, key: "s" },
 };
 
 const newFile = {
-  tool: function newFile(state, baseurl, dispatch) {
+  tool: (state, baseurl, dispatch) => {
     const filename = prompt("Enter file name?");
     if (filename === null) return;
     const fileurl = baseurl + state.currentdir + filename;
@@ -47,33 +49,52 @@ const newFile = {
       console.log(resp);
     });
   },
-  name: "new file",
+  name: "new file (ctrl + b)",
   hotkey: { metaKey: true, ctrlKey: true, key: "b" },
 };
 
-// this.tools = [
-//       {
-//         tool: this.newfile,
-//       },
-//       {
-//         tool: this.newdir,
-//         hotkey: { metaKey: true, ctrlKey: true, shifKey: true, key: "b" },
-//       },
-//       {
-//         tool: this.deletedir,
-//         hotkey: { metaKey: true, ctrlKey: true, shifKey: true },
-//         key: "d",
-//       },
-//     ];
-function newDir(that) {
-  const dirname = prompt("Enter directory name?");
-  if (dirname === null) return;
-  const dirurl = that.baseurl + that.state.dirname;
-  fetch(dirurl, { method: "MKCOL" }).then((resp) => {
-    if (resp.ok) {
-      that.dispatch({}, { refreshdir: true });
-    }
-  });
-}
+const newDir = {
+  tool: (state, baseurl, dispatch) => {
+    const dirname = prompt("Enter directory name?");
+    if (dirname === null) return;
+    const dirurl = baseurl + state.currentdir + dirname;
+    fetch(dirurl, { method: "MKCOL" }).then((resp) => {
+      if (resp.ok) {
+        dispatch({}, { refreshdir: true });
+      }
+    });
+  },
+  name: "new directory (ctrl + shift + b)",
+  hotkey: { metaKey: true, ctrlKey: true, shiftKey: true, key: "b" },
+};
 
-export { deleteFile, saveFile, newFile, newDir };
+const deleteDir = {
+  tool: (state, baseurl, dispatch) => {
+    if (state.currentdir == "/") {
+      alert("You can't delete the root directory.");
+      return;
+    }
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this directory? \n(all the files under this directory will be removed.)"
+    );
+    if (confirmDelete) {
+      const parentdir = getparentdir(state.currentdir);
+      fetch(baseurl + state.currentdir, { method: "DELETE" }).then((resp) => {
+        if (resp.ok) {
+          if (state.currentfile.startsWith(state.currentdir))
+            dispatch(
+              { currentdir: parentdir, currentfile: "" },
+              { opendir: true }
+            );
+          else dispatch({ currentdir: parentdir }, { opendir: true });
+          return;
+        }
+        console.log(resp);
+      });
+    }
+  },
+  name: "delete directory (ctrl + shift + d)",
+  hotkey: { metaKey: true, ctrlKey: true, shiftKey: true, key: "d" },
+};
+
+export { deleteFile, saveFile, newFile, newDir, deleteDir };
