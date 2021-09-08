@@ -11,7 +11,7 @@ class SkillShareServer {
     this.talks = talks;
     this.version = 0;
     this.waiting = [];
-    const fileServer = ecstatic({ root: "./root" });
+    const fileServer = ecstatic({ root: "./public" });
     this.server = createServer((request, response) => {
       let resolved = router.resolve(this, request);
       if (resolved) {
@@ -39,16 +39,18 @@ class SkillShareServer {
       body: JSON.stringify(talks),
       headers: {
         "Content-Type": "Application/json",
-        Etag: `${this.version}`,
+        Etag: `"${this.version}"`,
         "Cache-Control": "no-store",
       },
     };
   }
+
   updated() {
     this.version++;
     const response = this.talkReponse();
     this.waiting.forEach((resolve) => resolve(response));
     this.waiting = [];
+    console.log("updated: ", this.version);
   }
 
   waitForChanges(time) {
@@ -58,8 +60,8 @@ class SkillShareServer {
         if (!this.waiting.includes(resolve)) return;
         this.waiting = this.waiting.filter((r) => r != resolve);
         resolve({ status: 304 });
-      });
-    }, time * 1000);
+      }, time * 1000);
+    });
   }
   start(port) {
     this.server.listen(port);
@@ -132,7 +134,7 @@ router.add("PUT", talkPath, async (server, title, request) => {
  * Return 404 if no such talk has been found.
  */
 router.add(
-  "PUT",
+  "POST",
   /^\/talks\/([^/]+)\/comments$/,
   async (server, title, request) => {
     const requestBody = await readStream(request);
@@ -145,11 +147,11 @@ router.add(
     if (
       !comment ||
       typeof comment.author != "string" ||
-      typeof comment.messege != "string"
+      typeof comment.message != "string"
     ) {
       return { status: 400, body: "Bad comment data" };
     } else if (title in server.talks) {
-      server.talks[title].comment.push(comment);
+      server.talks[title].comments.push(comment);
       server.updated();
       return { status: 204 };
     } else {
@@ -163,7 +165,7 @@ router.add(
  * or no Etag was given.
  * Return 304 if no change on the server.
  */
-router.add("GET", /^\/talks$/, (server, request) => {
+router.add("GET", /^\/talks$/, async (server, request) => {
   const tag = /"(.*)"/.exec(request.headers["if-none-match"]);
   const wait = /\bwait=(\d+)/.exec(request.headers["prefer"]);
   if (!tag || tag[1] != server.version) {

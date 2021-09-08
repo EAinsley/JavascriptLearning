@@ -2,7 +2,7 @@
  * This module exports the Router class which allows adding new handlers
  * and resolve the requests.
  */
-const { URL } = require("url");
+const { /*URL,*/ parse } = require("url");
 
 /**
  * The Router class.
@@ -29,7 +29,8 @@ module.exports = class Router {
    * @returns {Response} the response of the request
    */
   resolve(context, request) {
-    const path = new URL(request.url).pathname;
+    const path = parse(request.url).pathname;
+    console.log("receive:", request.method, request.url);
     for (const { method, url, handler } of this.routes) {
       const match = url.exec(path);
       if (!match || request.method != method) continue;
