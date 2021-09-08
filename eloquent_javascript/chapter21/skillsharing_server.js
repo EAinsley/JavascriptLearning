@@ -1,10 +1,12 @@
 const { createServer } = require("http");
 const Router = require("./router.js");
 const ecstatic = require("ecstatic");
+const { readFile, writeFile } = require("fs").promises;
 
 const router = new Router();
 const defaultHeaders = { "Content-Type": "text/plain" };
 const talkPath = /^\/talks\/([^/]+)$/;
+const dataPath = "./talks.json";
 
 class SkillShareServer {
   constructor(talks) {
@@ -50,6 +52,7 @@ class SkillShareServer {
     const response = this.talkReponse();
     this.waiting.forEach((resolve) => resolve(response));
     this.waiting = [];
+    saveTalk(this.talks, dataPath);
     console.log("updated: ", this.version);
   }
 
@@ -186,4 +189,22 @@ function readStream(stream) {
   });
 }
 
-new SkillShareServer(Object.create(null)).start(8000);
+async function restoreTalk(file) {
+  return readFile(file)
+    .then((data) => JSON.parse(data))
+    .catch((error) => {
+      if (error.code != "ENOENT") throw error;
+      return [];
+    });
+}
+function saveTalk(data, to) {
+  writeFile(to, JSON.stringify(data))
+    .then(() => {
+      console.log("file saved");
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+restoreTalk(dataPath).then((talks) => new SkillShareServer(talks).start(8000));
