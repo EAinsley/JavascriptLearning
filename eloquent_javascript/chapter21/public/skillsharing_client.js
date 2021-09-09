@@ -66,20 +66,16 @@ function renderTalk(talk, dispatch) {
   return elt(
     "section",
     { className: "talk" },
+    elt("h2", null, talk.title),
     elt(
-      "h2",
-      null,
-      talk.title,
-      elt(
-        "button",
-        {
-          type: "button",
-          onclick() {
-            dispatch({ type: "deleteTalk", talk: talk.title });
-          },
+      "button",
+      {
+        type: "button",
+        onclick() {
+          dispatch({ type: "deleteTalk", talk: talk.title });
         },
-        "Delete"
-      )
+      },
+      "Delete"
     ),
     elt("div", null, "by ", elt("strong", null, talk.presenter)),
     elt("p", null, talk.summary),
@@ -156,6 +152,15 @@ async function pollTalks(update) {
   }
 }
 
+function updateComment(section, comments) {
+  const comments_count_old = section.querySelectorAll(":scope > .comment")
+    .length;
+  const comment_form = section.querySelector(":scope > form");
+  for (let i = comments_count_old; i < comments.length; i++) {
+    section.insertBefore(renderComment(comments[i]), comment_form);
+  }
+}
+
 class SkillShareApp {
   constructor(state, dispatch) {
     this.dispatch = dispatch;
@@ -169,13 +174,29 @@ class SkillShareApp {
     );
     this.syncState(state);
   }
+
   syncState(state) {
     if (state.talks != this.talks) {
-      this.talkDOM.textContent = "";
-      for (const talk of state.talks) {
-        this.talkDOM.appendChild(renderTalk(talk, this.dispatch));
+      const children = this.talkDOM.children;
+      if (state.talks.length == 0) {
+        this.talkDOM.textContent = "";
+      } else {
+        for (let i = 0; i < state.talks.length; i++) {
+          while (
+            i < children.length &&
+            children[i].firstChild.textContent != state.talks[i].title
+          ) {
+            this.talkDOM.removeChild(children[i]);
+          }
+          if (i < children.length) {
+            updateComment(children[i], state.talks[i].comments);
+          } else {
+            this.talkDOM.appendChild(renderTalk(state.talks[i], this.dispatch));
+          }
+        }
       }
     }
+    this.talks = state.talks;
   }
 }
 

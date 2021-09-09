@@ -53,6 +53,7 @@ class SkillShareServer {
     this.waiting.forEach((resolve) => resolve(response));
     this.waiting = [];
     saveTalk(this.talks, dataPath);
+    console.log(this.talks);
     console.log("updated: ", this.version);
   }
 
