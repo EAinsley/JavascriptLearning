@@ -64,7 +64,8 @@ class OnlieEditor {
       }
     }
   }
-  syncState(state, command) {
+
+  syncState(state) {
     this.state = state;
     for (const control of this.controls) {
       if (state) control.syncState(state);

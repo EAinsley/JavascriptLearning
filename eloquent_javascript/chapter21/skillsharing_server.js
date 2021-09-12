@@ -67,6 +67,7 @@ class SkillShareServer {
       }, time * 1000);
     });
   }
+
   start(port) {
     this.server.listen(port);
   }
